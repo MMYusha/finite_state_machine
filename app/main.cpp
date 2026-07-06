@@ -1,5 +1,6 @@
 #include <my_math/sum.hpp>
 
+
 #include <iostream>
 
 using std::cout, std::cin;
@@ -9,6 +10,8 @@ using std::cout, std::cin;
 // валидация, обработка исключений и прочее опущены, так как это не фокус примера
 // а еще мне лень
 int main() {
+    system("chcp 65001 > nul"); 
+    
     int a, b;
 
     cout << "Введите числа:" << '\n';

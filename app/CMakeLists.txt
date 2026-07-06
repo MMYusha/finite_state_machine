@@ -7,6 +7,4 @@ add_executable(main main.cpp)
 target_link_libraries(main PRIVATE my_math)
 
 # флаги компиляции для всех исходников приложения
-target_compile_options(main PRIVATE
-    -Wall -Wextra -Wpedantic
-)
+target_compile_options(my_math PRIVATE /W4 /std:c++17)
