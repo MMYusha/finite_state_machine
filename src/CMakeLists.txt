@@ -18,6 +18,10 @@ target_include_directories(my_math
 # флаги компиляции для target'а, в данном случае для всех исходников нашей библиотеки
 # флаги -Wall -Wextra -Wpedantic рекомендую включать на всех проектах
 # ...по крайней мере при использовании gcc или llvm тулчейнов; у msvc другие флаги, например
-target_compile_options(my_math PRIVATE
-    -Wall -Wextra -Wpedantic
-)
+if(MSVC)
+    target_compile_options(my_math PRIVATE /W4)   # можно заменить на /W3 или убрать совсем
+else()
+    target_compile_options(my_math PRIVATE
+        -Wall -Wextra -Wpedantic
+    )
+endif()

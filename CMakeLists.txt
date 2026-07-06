@@ -1,9 +1,10 @@
 # это обязательная декларация; версию ставьте ту, которая у вас установлена
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 4.3.4)
 
 # имя проекта; не путать с именами target'ов, которые мы собираем
-project(BUILD_SHOWCASE)
-
+project(finite_state_machine)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # во время разработки ставим Debug; когда выпускаем версию, ставим Release
 set(CMAKE_BUILD_TYPE Debug)

@@ -1,0 +1,10 @@
+^D:\!МГТУ\ПРАКТИКА_2026\FINITE_STATE_MACHINE\APP\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/!МГТУ/Практика_2026/finite_state_machine -BD:/!МГТУ/Практика_2026/finite_state_machine/build --check-stamp-file D:/!МГТУ/Практика_2026/finite_state_machine/build/app/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

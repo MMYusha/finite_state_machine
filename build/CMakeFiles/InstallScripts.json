@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/!\u041c\u0413\u0422\u0423/\u041f\u0440\u0430\u043a\u0442\u0438\u043a\u0430_2026/finite_state_machine/build/cmake_install.cmake",
+		"D:/!\u041c\u0413\u0422\u0423/\u041f\u0440\u0430\u043a\u0442\u0438\u043a\u0430_2026/finite_state_machine/build/src/cmake_install.cmake",
+		"D:/!\u041c\u0413\u0422\u0423/\u041f\u0440\u0430\u043a\u0442\u0438\u043a\u0430_2026/finite_state_machine/build/app/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
