@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\!МГТУ\Практика_2026\finite_state_machine\app\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\!МГТУ\Практика_2026\finite_state_machine\app\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{FE2226DE-7979-3A57-85E8-603C8FF055CE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
