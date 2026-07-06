@@ -1,0 +1,28 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++ сборка проекта",
+            "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-I${workspaceFolder}/include",
+                "${workspaceFolder}/app/main.cpp",
+                "${workspaceFolder}/src/sum.cpp",
+                "-o",
+                "${workspaceFolder}/app/main.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Сборка main.cpp + sum.cpp"
+        }
+    ],
+    "version": "2.0.0"
+}
