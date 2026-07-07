@@ -1,0 +1,11 @@
+D:/!BMSTU/Practice2026/finite_state_machine/build/CMakeFiles/edit_cache.dir
+D:/!BMSTU/Practice2026/finite_state_machine/build/CMakeFiles/rebuild_cache.dir
+D:/!BMSTU/Practice2026/finite_state_machine/build/src/CMakeFiles/my_math.dir
+D:/!BMSTU/Practice2026/finite_state_machine/build/src/CMakeFiles/edit_cache.dir
+D:/!BMSTU/Practice2026/finite_state_machine/build/src/CMakeFiles/rebuild_cache.dir
+D:/!BMSTU/Practice2026/finite_state_machine/build/app/CMakeFiles/main.dir
+D:/!BMSTU/Practice2026/finite_state_machine/build/app/CMakeFiles/edit_cache.dir
+D:/!BMSTU/Practice2026/finite_state_machine/build/app/CMakeFiles/rebuild_cache.dir
+D:/!BMSTU/Practice2026/finite_state_machine/build/tests/CMakeFiles/my_math_test.dir
+D:/!BMSTU/Practice2026/finite_state_machine/build/tests/CMakeFiles/edit_cache.dir
+D:/!BMSTU/Practice2026/finite_state_machine/build/tests/CMakeFiles/rebuild_cache.dir

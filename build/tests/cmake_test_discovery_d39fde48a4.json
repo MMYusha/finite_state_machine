@@ -1,0 +1,38 @@
+{
+  "tests": 4,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "MyMathTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "ResultIsSumOfIntegers",
+          "file": "D:\\!BMSTU\\Practice2026\\finite_state_machine\\tests\\sum.test.cpp",
+          "line": 9
+        },
+        {
+          "name": "HasCommutativeProperty",
+          "file": "D:\\!BMSTU\\Practice2026\\finite_state_machine\\tests\\sum.test.cpp",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "name": "ExampleFailingTests",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "ThisOneShouldFail",
+          "file": "D:\\!BMSTU\\Practice2026\\finite_state_machine\\tests\\sum.test.cpp",
+          "line": 34
+        },
+        {
+          "name": "ThisOneAlsoFails",
+          "file": "D:\\!BMSTU\\Practice2026\\finite_state_machine\\tests\\sum.test.cpp",
+          "line": 51
+        }
+      ]
+    }
+  ]
+}

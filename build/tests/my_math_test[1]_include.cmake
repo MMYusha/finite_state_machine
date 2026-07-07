@@ -1,0 +1,5 @@
+if(EXISTS "D:/!BMSTU/Practice2026/finite_state_machine/build/tests/my_math_test[1]_tests.cmake")
+  include("D:/!BMSTU/Practice2026/finite_state_machine/build/tests/my_math_test[1]_tests.cmake")
+else()
+  add_test(my_math_test_NOT_BUILT my_math_test_NOT_BUILT)
+endif()

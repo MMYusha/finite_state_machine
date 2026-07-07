@@ -1,0 +1,2 @@
+C:\msys64\ucrt64\bin\ar.exe qc libmy_math.a CMakeFiles/my_math.dir/sum.cpp.obj
+C:\msys64\ucrt64\bin\ranlib.exe libmy_math.a

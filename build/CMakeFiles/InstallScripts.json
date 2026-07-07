@@ -1,0 +1,10 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/!BMSTU/Practice2026/finite_state_machine/build/cmake_install.cmake",
+		"D:/!BMSTU/Practice2026/finite_state_machine/build/src/cmake_install.cmake",
+		"D:/!BMSTU/Practice2026/finite_state_machine/build/app/cmake_install.cmake",
+		"D:/!BMSTU/Practice2026/finite_state_machine/build/tests/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
