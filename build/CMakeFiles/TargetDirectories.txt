@@ -1,4 +1,0 @@
-D:/!МГТУ/Практика_2026/finite_state_machine/build/CMakeFiles/ALL_BUILD.dir
-D:/!МГТУ/Практика_2026/finite_state_machine/build/CMakeFiles/ZERO_CHECK.dir
-D:/!МГТУ/Практика_2026/finite_state_machine/build/src/CMakeFiles/my_math.dir
-D:/!МГТУ/Практика_2026/finite_state_machine/build/app/CMakeFiles/main.dir
