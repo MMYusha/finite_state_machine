@@ -1,24 +1,50 @@
-#include <my_math/sum.hpp>
-
-
 #include <iostream>
+#include <unordered_map>
+#include <string>
+#include <func_transition/transit.hpp>
 
-using std::cout, std::cin;
-
-
-// не стоит использовать это как пример хорошего кода
-// валидация, обработка исключений и прочее опущены, так как это не фокус примера
-// а еще мне лень
 int main() {
     system("chcp 65001 > nul"); 
-    
-    int a, b;
+    // Типы для читаемости
+    using State = char;
+    using Symbol = char;
 
-    cout << "Введите числа:" << '\n';
-    cin >> a >> b;
-    
-    // но раз уж мы здесь, с потоками используйте \n вместо std::endl
-    cout << "Сумма чисел = " << my_math::sum(a, b) << '\n';
+    // Вложенная хеш-таблица переходов:
+    // состояние -> (символ -> следующее состояние)
+    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
 
+    // Заполнение переходов согласно таблице
+    transitions['A']['0'] = 'B';
+    transitions['A']['1'] = 'F';
+
+    transitions['B']['0'] = 'G';
+    transitions['B']['1'] = 'C';
+
+    transitions['C']['0'] = 'A';
+    transitions['C']['1'] = 'C';
+
+    transitions['D']['0'] = 'C';
+    transitions['D']['1'] = 'G';
+
+    transitions['E']['0'] = 'H';
+    transitions['E']['1'] = 'F';
+
+    transitions['F']['0'] = 'C';
+    transitions['F']['1'] = 'G';
+
+    transitions['G']['0'] = 'G';
+    transitions['G']['1'] = 'E';
+
+    transitions['H']['0'] = 'G';
+    transitions['H']['1'] = 'C';
+
+    State current = 'A';  // начальное состояние
+
+
+    std::string input = "0101"; // пример входной строки
+
+    // Обработка каждого символа
+    State final_state = func_transition::transit(input, current, transitions);
+    
     return 0;
 }
