@@ -38,13 +38,13 @@ int main() {
     transitions['H']['0'] = 'G';
     transitions['H']['1'] = 'C';
 
-    State current = 'A';  // начальное состояние
-
+    State start = 'A';  // начальное состояние
+    State current = start;
 
     std::string input = "0101"; // пример входной строки
 
-    // Обработка каждого символа
+    // Обработка строки
     State final_state = func_transition::transit(input, current, transitions);
-    
+    std::cout << "Переход состояние " << final_state << " из начального "<< start <<" по строке " << input << "\n";
     return 0;
 }

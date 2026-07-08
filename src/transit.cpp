@@ -25,6 +25,7 @@ State func_transition::transit(const std::string& input, State current,
         current = sym_it->second;
         std::cout << "Переход по '" << ch << "' → состояние " << current << "\n";
     }
+    std::cout << "\n";
     return current;
 }
 
