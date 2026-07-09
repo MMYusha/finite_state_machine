@@ -80,6 +80,25 @@ vector<vector<char>> func_minimization::DFAmin(
                 Count[i] ++;
             }
         }
+
+        // Проверка возможности разбиения классов в Involved по сплиттеру С
+        for (int i : Involved){
+            if (Count[i] < P[i].size()){
+                P.push_back({}); // создадим пустой класс в разбиении P
+                Twin[i] = P.size() - 1; // индекс нового класса под разбиение
+            }
+        }
+
+        for (int q : splitter){
+            for (char r : Inv[q][a]){
+                int i = Class[r];
+                int j = Twin[i];
+                if (j != 0){
+
+                }
+            }
+        }
+
     }
 
 
