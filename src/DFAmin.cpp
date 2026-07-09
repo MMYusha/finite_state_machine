@@ -6,7 +6,7 @@
 
 #include <queue>
 #include <utility>   // для std::pair
-
+#include <algorithm>   // для std::sort
 using namespace std;
 
 
@@ -94,7 +94,7 @@ vector<vector<char>> func_minimization::DFAmin(
                 int i = Class[r];
                 int j = Twin[i];
                 if (j != 0){
-
+                    
                 }
             }
         }
@@ -107,6 +107,8 @@ vector<vector<char>> func_minimization::DFAmin(
     for (auto cls : P) {
         result.push_back(vector<char>(cls.begin(), cls.end()));
     }
-
+    for (auto& vec : result) {
+        sort(vec.begin(), vec.end());
+    }
     return result;
 }
