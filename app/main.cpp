@@ -46,6 +46,7 @@ int main() {
     transitions['H']['1'] = 'C';
 
 
+    vector<Symbol> E = {'0','1'};
     vector<State> Q = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}; // множество состояний
     vector<State> F = {'C'}; // множество допустимы состояний
 
@@ -58,7 +59,7 @@ int main() {
     State final_state = transit(input, current, transitions);
     cout << "Переход состояние " << final_state << " из начального "<< start <<" по строке " << input << "\n";
 
-    vector<vector<char>> P = DFAmin(Q,F,transitions);
+    vector<vector<char>> P = DFAmin(E,Q,F,transitions);
     for (auto cls : P) {
         printf("{ ");
         for (auto state : cls) {
