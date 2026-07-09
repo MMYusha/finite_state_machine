@@ -89,19 +89,39 @@ vector<vector<char>> func_minimization::DFAmin(
             }
         }
 
+        // Перемещение состояний
         for (int q : splitter){
             for (char r : Inv[q][a]){
                 int i = Class[r];
                 int j = Twin[i];
                 if (j != 0){
-                    
+                    // перенос r из P[i] в P[j]
+                    P[i].erase(r); // удаление r из старого класса
+                    P[j].insert(r); // добавление r в новый класс
+                    Class[r] = j; // обновление индекса класса, в котором r
                 }
             }
         }
 
+        for (int i : Involved){
+            int j = Twin[i];
+            if (j != 0){
+                if (P[j].size()<P[i].size()){ // парный класс должен быть меньшего размера
+                    swap(P[i],P[j]);
+                }
+                for (auto r : P[j]){
+                    Class[r] = j;
+                }
+                for (char c : alphabet){
+                    Queue.push({j,c});
+                }
+            }
+            Count[i] = 0;
+            Twin[i] = 0;
+        }
     }
 
-    // <-- Преобразование результата в vector<vector<char>> для возврата
+    // Преобразование результата в vector<vector<char>> для возврата
     vector<vector<char>> result;
     result.reserve(P.size());
     for (auto cls : P) {
