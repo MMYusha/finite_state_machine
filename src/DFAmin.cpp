@@ -29,9 +29,9 @@ vector<vector<char>> func_minimization::DFAmin(
 
 
     //P←{F, Q∖F}
-    vector<vector<char>> P;
+    vector<unordered_set<char>> P;
     //добавление в разбиение P допускающих состояний
-    P.push_back(F);
+    P.push_back(unordered_set<char>(F.begin(), F.end()));
     
 
     // добавление в разбиение P недопускающих состояний
@@ -48,7 +48,7 @@ vector<vector<char>> func_minimization::DFAmin(
             Class[state] = 0;
         }
     }
-    P.push_back(nonF);
+    P.push_back(unordered_set<char>(nonF.begin(),nonF.end()));
     
     // Инициализация очереди Queue
     queue<pair<int,char>> Queue;
@@ -67,7 +67,7 @@ vector<vector<char>> func_minimization::DFAmin(
         // Получение пары из очереди [индекс класса Сплиттера, символ алфавита]
         auto [C, a] = Queue.front();
         Queue.pop();
-        vector<char> splitter = P[C]; 
+        auto splitter = P[C]; 
         
         // Заполнение Involved 
         Involved.clear();   
@@ -77,15 +77,15 @@ vector<vector<char>> func_minimization::DFAmin(
                 if (Count[i] == 0){
                     Involved.push_back(i);
                 }
-                Count[i] ++;
+                ++Count[i];
             }
         }
 
         // Проверка возможности разбиения классов в Involved по сплиттеру С
         for (int i : Involved){
-            if (Count[i] < P[i].size()){
+            if (Count[i] < static_cast<int>(P[i].size())){
                 P.push_back({}); // создадим пустой класс в разбиении P
-                Twin[i] = P.size() - 1; // индекс нового класса под разбиение
+                Twin[i] = static_cast<int>(P.size()) - 1; // индекс нового класса под разбиение
             }
         }
 
@@ -101,7 +101,12 @@ vector<vector<char>> func_minimization::DFAmin(
 
     }
 
+    // <-- Преобразование результата в vector<vector<char>> для возврата
+    vector<vector<char>> result;
+    result.reserve(P.size());
+    for (auto cls : P) {
+        result.push_back(vector<char>(cls.begin(), cls.end()));
+    }
 
-
-    return P;
+    return result;
 }
