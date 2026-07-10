@@ -65,6 +65,7 @@ void writeDFA(const std::string& filename, const Result& res) {
         // Добавляем два пустых поля (;;) для соответствия формату примера
         file << ";;\n";
     }
+    printf("ДКА сохранен в %s\n\n",filename.c_str());
 }
 
 } // namespace func_input
