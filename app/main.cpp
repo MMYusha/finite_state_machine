@@ -78,5 +78,6 @@ int main() {
     res = CreateNewTransitions(res, P);
     writeDFA("output.csv", res);
 
+    
     return 0;
 }
