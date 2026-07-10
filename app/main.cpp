@@ -51,7 +51,6 @@ int main() {
     // Алфавит, состояния, допускающие, начальное состояние — все как строки
     vector<string> E = {"0", "1"};
     vector<string> Q = {"A", "B", "C", "D", "E", "F", "G", "H"};
-    vector<string> F = {"C"};
 
     string start = "A";
     State current = start;
@@ -64,7 +63,12 @@ int main() {
         printf("%s ", cls.c_str());
     }
     printf("\n");
-
+    cout << "Допустимые состояния - ";
+    for (auto cls : res.permited_state) {   
+        printf("%s ", cls.c_str());
+    }
+    printf("\n");
+    vector<string> F = res.permited_state;
     vector<string> input = res.string_transition; // пример входной строки из файла
     // Обработка строки
     State final_state = transit(input, current, transitions);

@@ -21,10 +21,19 @@ func_input::Result func_input::DFAinput(string filename) {
     string token;
     string firstLine;
     getline(file, firstLine);
-    stringstream ss(firstLine);
+    stringstream ss1(firstLine);
     bool first = true;
-    while (getline(ss, token,';')){
+    while (getline(ss1, token,';')){
         if (!first) res.string_transition.push_back(token);
+        first = false;
+    }
+
+    string secondLine;
+    getline(file, secondLine);
+    stringstream ss2(secondLine);
+    first = true;
+    while (getline(ss2, token,';')){
+        if (!first) res.permited_state.push_back(token);
         first = false;
     }
 
