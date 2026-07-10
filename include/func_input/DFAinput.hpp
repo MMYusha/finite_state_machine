@@ -12,6 +12,7 @@ namespace func_input{
     struct Result {
         vector<string> string_transition;
         vector<string> permited_state;
+        string start_state;
         vector<string> alphabet;
         vector<string> states;
         unordered_map<string, unordered_map<string, string>> transitions;
