@@ -9,11 +9,11 @@ using namespace std;
 
 namespace func_minimization{
 
-vector<vector<char>> DFAmin(
-    const vector<char>& alphabet,
-    const vector<char>& Q, 
-    const vector<char>& F,
-    const unordered_map<char, unordered_map<char, char>>& transitions);
+vector<vector<string>> DFAmin(
+    const vector<string>& alphabet,
+    const vector<string>& Q, 
+    const vector<string>& F,
+    const unordered_map<string, unordered_map<string, string>>& transitions);
 }
 
 #endif // func_minimization_DFAmin_HPP_

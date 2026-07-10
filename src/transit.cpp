@@ -1,6 +1,8 @@
 #include <func_transition/transit.hpp> // публичные include подключаем как системные
 #include <iostream>   // для std::cout
 
+using namespace std;
+
 template <typename State, typename Symbol>
 
 State func_transition::transit(const std::string& input, State current,
@@ -15,7 +17,7 @@ State func_transition::transit(const std::string& input, State current,
         }
         // Ищем переход по текущему символу
         // Внутренняя таблица – это unordered_map<Symbol, State>
-        auto sym_it = state_it->second.find(static_cast<Symbol>(ch));
+        auto sym_it = state_it->second.find(string(1, ch));
         if (sym_it == state_it->second.end()) {
             std::cout << "Нет перехода по символу '" << ch << "'\n";
             break; // переход не определён
@@ -29,7 +31,7 @@ State func_transition::transit(const std::string& input, State current,
     return current;
 }
 
-template char func_transition::transit<char, char>(
+template string func_transition::transit<string, string>(
     const std::string&,
-    char,
-    const std::unordered_map<char, std::unordered_map<char, char>>&);
+    string,
+    const std::unordered_map<string, std::unordered_map<string, string>>&);
