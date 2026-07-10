@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+
 #include <func_transition/transit.hpp>
 #include <func_minimization/DFAmin.hpp>
 #include <func_input/DFAinput.hpp>
@@ -74,7 +75,7 @@ int main() {
     }
     printf("\n");
 
-
+    writeDFA("output.csv", res);
 
     return 0;
 }

@@ -19,6 +19,7 @@ namespace func_input{
     };
 
     Result DFAinput(string filename);
+    void writeDFA(const std::string& filename, const Result& res);
 
 }
 

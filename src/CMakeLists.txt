@@ -11,6 +11,7 @@ add_library(func_minimization STATIC
 )
 add_library(func_input STATIC
     DFAinput.cpp
+    writeDFA.cpp
 )
 # делаем доступными публичные заголовочные файлы
 # благодаря этому в sum.cpp заголовочный файл мы подключаем как системный
