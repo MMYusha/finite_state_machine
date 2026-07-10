@@ -75,6 +75,7 @@ int main() {
     }
     printf("\n");
 
+    res = CreateNewTransitions(res, P);
     writeDFA("output.csv", res);
 
     return 0;
