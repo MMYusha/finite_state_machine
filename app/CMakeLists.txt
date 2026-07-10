@@ -7,6 +7,7 @@ add_executable(main main.cpp)
 target_link_libraries(main PRIVATE
     func_minimization
     func_transition
+    func_input
 )
 
 # флаги компиляции для всех исходников приложения
