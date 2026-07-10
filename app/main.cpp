@@ -5,17 +5,20 @@
 #include <vector>
 #include <func_transition/transit.hpp>
 #include <func_minimization/DFAmin.hpp>
+#include <func_input/DFAinput.hpp>
 
 using namespace std;
 using namespace func_transition;
 using namespace func_minimization;
+using namespace func_input;
+
 
 int main() {
     system("chcp 65001 > nul"); 
     // Типы для читаемости
     using State = string;
     using Symbol = string;
-
+    
     // Вложенная хеш-таблица переходов:
     // состояние -> (символ -> следующее состояние)
     unordered_map<string, unordered_map<string, string>> transitions;
@@ -53,10 +56,19 @@ int main() {
     string start = "A";
     State current = start;
 
-    string input = "0101"; // пример входной строки
+    string filename = "input.csv";
+    Result res;
+    res = DFAinput(filename);
+    cout << "Строка перехода - ";
+    for (auto cls : res.string_transition) {   
+        printf("%s ", cls.c_str());
+    }
+    printf("\n");
+
+    vector<string> input = res.string_transition; // пример входной строки из файла
     // Обработка строки
     State final_state = transit(input, current, transitions);
-    cout << "Переход состояние " << final_state << " из начального "<< start <<" по строке " << input << "\n";
+    cout << "Переход состояние " << final_state << " из начального "<< start  << "\n";
 
     vector<vector<string>> P = DFAmin(E,Q,F,transitions);
     for (auto cls : P) {
@@ -66,5 +78,8 @@ int main() {
         }
         printf("}\n");
     }
+
+
+
     return 0;
 }

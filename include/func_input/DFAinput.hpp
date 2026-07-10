@@ -1,6 +1,5 @@
-#ifndef func_minimization_DFAmin_HPP_
-#define func_minimization_DFAmin_HPP_
-
+#ifndef func_input_DFAmin_HPP_
+#define func_input_DFAmin_HPP_
 
 #include <iostream>   // для std::cout
 #include <vector> 
@@ -18,8 +17,8 @@ namespace func_input{
         unordered_map<string, unordered_map<string, string>> transitions;
     };
 
- Result DFAinput(string filename);
+    Result DFAinput(string filename);
 
 }
 
-#endif // func_minimization_DFAmin_HPP_
+#endif // func_input_DFAmin_HPP_

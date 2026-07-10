@@ -3,11 +3,12 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>   // для std::cout
 
 namespace func_transition {
 
 template <typename State, typename Symbol>
-State transit(const std::string& input, State current,
+State transit(const std::vector<Symbol>& input, State current,
               const std::unordered_map<State, std::unordered_map<Symbol, State>>& transitions);
 
 } // namespace func_transition
