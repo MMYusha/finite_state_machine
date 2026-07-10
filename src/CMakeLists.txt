@@ -8,6 +8,7 @@ add_library(func_transition STATIC
 )
 add_library(func_minimization STATIC
     DFAmin.cpp
+    CreateNewTransitions.cpp
 )
 add_library(func_input STATIC
     DFAinput.cpp
