@@ -16,6 +16,7 @@ add_executable(my_DFA_test
 target_link_libraries(my_DFA_test PRIVATE
     GTest::gtest_main
     func_transition
+    func_input  
 )
 
 # в данном случае не нужно, но в ваших серьезных проектах в тесты надо будет подключать публичные и приватные хэдеры

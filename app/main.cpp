@@ -18,49 +18,16 @@ int main() {
     // Типы для читаемости
     using State = string;
     using Symbol = string;
-    
-    // Вложенная хеш-таблица переходов:
-    // состояние -> (символ -> следующее состояние)
-    unordered_map<string, unordered_map<string, string>> transitions;
-
-    // Заполнение переходов
-    transitions["A"]["0"] = "B";
-    transitions["A"]["1"] = "F";
-
-    transitions["B"]["0"] = "G";
-    transitions["B"]["1"] = "C";
-
-    transitions["C"]["0"] = "A";
-    transitions["C"]["1"] = "C";
-
-    transitions["D"]["0"] = "C";
-    transitions["D"]["1"] = "G";
-
-    transitions["E"]["0"] = "H";
-    transitions["E"]["1"] = "F";
-
-    transitions["F"]["0"] = "C";
-    transitions["F"]["1"] = "G";
-
-    transitions["G"]["0"] = "G";
-    transitions["G"]["1"] = "E";
-
-    transitions["H"]["0"] = "G";
-    transitions["H"]["1"] = "C";
-
-    // Алфавит, состояния, допускающие, начальное состояние — все как строки
-    vector<string> E = {"0", "1"};
-    vector<string> Q = {"A", "B", "C", "D", "E", "F", "G", "H"};
-    //vector<string> F = {"C"};
-    //string start = "A";
-    //State current = start;
 
 
+    // Чтение ДКА из csv файла
     string filename = "input.csv";
     Result res;
     res = DFAinput(filename);
 
-    cout << "Строка перехода - ";
+
+    // Информация о ДКА из файла
+    cout << "\nСтрока перехода - ";
     for (auto cls : res.string_transition) {   
         printf("%s ", cls.c_str());
     }
@@ -74,14 +41,30 @@ int main() {
 
     cout << "Начальное состояние - " << res.start_state << "\n";
 
+    cout << "Алфавит - ";
+    for (auto cls : res.alphabet) {   
+        printf("%s ", cls.c_str());
+    }
+    printf("\n\n");
+
+
+    // Инициализация ДКА
     State current = res.start_state;
     vector<string> F = res.permited_state;
     vector<string> input = res.string_transition; // пример входной строки из файла
-    // Обработка строки
-    State final_state = transit(input, current, transitions);
-    cout << "Переход состояние " << final_state << " из начального "<< res.start_state  << "\n";
+    vector<string> E = res.alphabet;
+    vector<string> Q = res.states;
+    unordered_map<string, unordered_map<string, string>> transitions = res.transitions;
 
+
+    // Обработка строки перехода
+    State final_state = transit(input, current, transitions);
+    cout << "Переход в состояние" << final_state << " из начального "<< res.start_state  << "\n\n";
+
+    
+    // Минимизация ДКА
     vector<vector<string>> P = DFAmin(E,Q,F,transitions);
+    printf("Разбиения:\n");
     for (auto cls : P) {
         printf("{ ");
         for (auto state : cls) {
@@ -89,6 +72,7 @@ int main() {
         }
         printf("}\n");
     }
+    printf("\n");
 
 
 
