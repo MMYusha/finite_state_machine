@@ -5,67 +5,76 @@
 #include <vector>
 #include <func_transition/transit.hpp>
 #include <func_minimization/DFAmin.hpp>
+#include <func_input/DFAinput.hpp>
 
 using namespace std;
 using namespace func_transition;
 using namespace func_minimization;
+using namespace func_input;
+
 
 int main() {
     system("chcp 65001 > nul"); 
     // Типы для читаемости
-    using State = char;
-    using Symbol = char;
-
-    // Вложенная хеш-таблица переходов:
-    // состояние -> (символ -> следующее состояние)
-    unordered_map<State, unordered_map<Symbol, State>> transitions;
-
-    // Заполнение переходов согласно таблице
-    transitions['A']['0'] = 'B';
-    transitions['A']['1'] = 'F';
-
-    transitions['B']['0'] = 'G';
-    transitions['B']['1'] = 'C';
-
-    transitions['C']['0'] = 'A';
-    transitions['C']['1'] = 'C';
-
-    transitions['D']['0'] = 'C';
-    transitions['D']['1'] = 'G';
-
-    transitions['E']['0'] = 'H';
-    transitions['E']['1'] = 'F';
-
-    transitions['F']['0'] = 'C';
-    transitions['F']['1'] = 'G';
-
-    transitions['G']['0'] = 'G';
-    transitions['G']['1'] = 'E';
-
-    transitions['H']['0'] = 'G';
-    transitions['H']['1'] = 'C';
+    using State = string;
+    using Symbol = string;
 
 
-    vector<Symbol> E = {'0','1'};
-    vector<State> Q = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}; // множество состояний
-    vector<State> F = {'C'}; // множество допустимы состояний
+    // Чтение ДКА из csv файла
+    string filename = "input.csv";
+    Result res;
+    res = DFAinput(filename);
 
 
-    State start = 'A';  // начальное состояние
-    State current = start;
+    // Информация о ДКА из файла
+    cout << "\nСтрока перехода - ";
+    for (auto cls : res.string_transition) {   
+        printf("%s ", cls.c_str());
+    }
+    printf("\n");
 
-    string input = "0101"; // пример входной строки
-    // Обработка строки
+    cout << "Допустимые состояния - ";
+    for (auto cls : res.permited_state) {   
+        printf("%s ", cls.c_str());
+    }
+    printf("\n");
+
+    cout << "Начальное состояние - " << res.start_state << "\n";
+
+    cout << "Алфавит - ";
+    for (auto cls : res.alphabet) {   
+        printf("%s ", cls.c_str());
+    }
+    printf("\n\n");
+
+
+    // Инициализация ДКА
+    State current = res.start_state;
+    vector<string> F = res.permited_state;
+    vector<string> input = res.string_transition; // пример входной строки из файла
+    vector<string> E = res.alphabet;
+    vector<string> Q = res.states;
+    unordered_map<string, unordered_map<string, string>> transitions = res.transitions;
+
+
+    // Обработка строки перехода
     State final_state = transit(input, current, transitions);
-    cout << "Переход состояние " << final_state << " из начального "<< start <<" по строке " << input << "\n";
+    cout << "Переход в состояние" << final_state << " из начального "<< res.start_state  << "\n\n";
 
-    vector<vector<char>> P = DFAmin(E,Q,F,transitions);
+    
+    // Минимизация ДКА
+    vector<vector<string>> P = DFAmin(E,Q,F,transitions);
+    printf("Разбиения:\n");
     for (auto cls : P) {
         printf("{ ");
         for (auto state : cls) {
-            printf("%c ", state);
+            printf("%s ", state.c_str());
         }
         printf("}\n");
     }
+    printf("\n");
+
+
+
     return 0;
 }

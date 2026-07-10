@@ -10,36 +10,35 @@
 using namespace std;
 
 
-vector<vector<char>> func_minimization::DFAmin(
-    const vector<char>& alphabet,
-    const vector<char>& Q, 
-    const vector<char>& F,
-    const unordered_map<char, unordered_map<char, char>>& transitions) {
+vector<vector<string>> func_minimization::DFAmin(
+    const vector<string>& alphabet,
+    const vector<string>& Q, 
+    const vector<string>& F,
+    const unordered_map<string, unordered_map<string, string>>& transitions) {
     
     // Создание хэш-таблицы обратных переходов
-    unordered_map<char, unordered_map<char, vector<char>>> Inv;
-    for (char state : Q){ // перебор всех состояний
+    unordered_map<string, unordered_map<string, vector<string>>> Inv;
+    for (string state : Q){ // перебор всех состояний
         auto it = transitions.find(state);
         for (auto pair : it->second){ // перебор всех переходов из состояния
-            char symbol = pair.first; 
-            char next  = pair.second;
+            string symbol = pair.first; 
+            string next  = pair.second;
             Inv[next][symbol].push_back(state);
         }
     }
 
 
     //P←{F, Q∖F}
-    vector<unordered_set<char>> P;
+    vector<unordered_set<string>> P;
     //добавление в разбиение P допускающих состояний
-    P.push_back(unordered_set<char>(F.begin(), F.end()));
+    P.push_back(unordered_set<string>(F.begin(), F.end()));
     
-
     // добавление в разбиение P недопускающих состояний
     // Инициализация классов разбиения Class
-    unordered_map<char, int> Class; // классы разбиения Class
-    unordered_set<char> setF(F.begin(), F.end()); //хэш-таблица для быстрого поиска
-    vector<char> nonF;
-    for (char state : Q){
+    unordered_map<string, int> Class; // классы разбиения Class
+    unordered_set<string> setF(F.begin(), F.end()); //хэш-таблица для быстрого поиска
+    vector<string> nonF;
+    for (string state : Q){
         if (setF.find(state) == setF.end()){
             nonF.push_back(state);
             Class[state] = 1;
@@ -48,11 +47,11 @@ vector<vector<char>> func_minimization::DFAmin(
             Class[state] = 0;
         }
     }
-    P.push_back(unordered_set<char>(nonF.begin(),nonF.end()));
+    P.push_back(unordered_set<string>(nonF.begin(),nonF.end()));
     
     // Инициализация очереди Queue
-    queue<pair<int,char>> Queue;
-    for (char c : alphabet){ // alphabet = E
+    queue<pair<int,string>> Queue;
+    for (string c : alphabet){ // alphabet = E
         Queue.push({0, c});
         Queue.push({1, c});
     }
@@ -71,8 +70,8 @@ vector<vector<char>> func_minimization::DFAmin(
         
         // Заполнение Involved 
         Involved.clear();   
-        for (char q : splitter){
-            for (char r : Inv[q][a]){
+        for (string q : splitter){
+            for (string r : Inv[q][a]){
                 int i = Class[r];
                 if (Count[i] == 0){
                     Involved.push_back(i);
@@ -90,8 +89,8 @@ vector<vector<char>> func_minimization::DFAmin(
         }
 
         // Перемещение состояний
-        for (int q : splitter){
-            for (char r : Inv[q][a]){
+        for (string q : splitter){
+            for (string r : Inv[q][a]){
                 int i = Class[r];
                 int j = Twin[i];
                 if (j != 0){
@@ -112,7 +111,7 @@ vector<vector<char>> func_minimization::DFAmin(
                 for (auto r : P[j]){
                     Class[r] = j;
                 }
-                for (char c : alphabet){
+                for (string c : alphabet){
                     Queue.push({j,c});
                 }
             }
@@ -122,10 +121,10 @@ vector<vector<char>> func_minimization::DFAmin(
     }
 
     // Преобразование результата в vector<vector<char>> для возврата
-    vector<vector<char>> result;
+    vector<vector<string>> result;
     result.reserve(P.size());
     for (auto cls : P) {
-        result.push_back(vector<char>(cls.begin(), cls.end()));
+        result.push_back(vector<string>(cls.begin(), cls.end()));
     }
     for (auto& vec : result) {
         sort(vec.begin(), vec.end());

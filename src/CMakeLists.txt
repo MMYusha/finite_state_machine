@@ -9,6 +9,9 @@ add_library(func_transition STATIC
 add_library(func_minimization STATIC
     DFAmin.cpp
 )
+add_library(func_input STATIC
+    DFAinput.cpp
+)
 # делаем доступными публичные заголовочные файлы
 # благодаря этому в sum.cpp заголовочный файл мы подключаем как системный
 target_include_directories(func_transition
@@ -17,6 +20,11 @@ target_include_directories(func_transition
         $<INSTALL_INTERFACE:include>
 )
 target_include_directories(func_minimization
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+)
+target_include_directories(func_input
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
@@ -30,5 +38,8 @@ target_compile_options(func_transition PRIVATE
     -Wall -Wextra -Wpedantic
 )
 target_compile_options(func_minimization PRIVATE
+    -Wall -Wextra -Wpedantic
+)
+target_compile_options(func_input PRIVATE
     -Wall -Wextra -Wpedantic
 )

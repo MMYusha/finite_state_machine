@@ -1,12 +1,15 @@
 #include <func_transition/transit.hpp> // публичные include подключаем как системные
 #include <iostream>   // для std::cout
+#include <vector>   // для std::cout
+
+using namespace std;
 
 template <typename State, typename Symbol>
 
-State func_transition::transit(const std::string& input, State current,
+State func_transition::transit(const vector<Symbol>& input, State current,
               const std::unordered_map<State, std::unordered_map<Symbol, State>>& transitions) {
     // Обработка каждого символа
-    for (char ch : input) {   
+    for (Symbol ch : input) {   
         // Ищем таблицу переходов из текущего состояния
         auto state_it = transitions.find(current);
         if (state_it == transitions.end()) {
@@ -15,7 +18,7 @@ State func_transition::transit(const std::string& input, State current,
         }
         // Ищем переход по текущему символу
         // Внутренняя таблица – это unordered_map<Symbol, State>
-        auto sym_it = state_it->second.find(static_cast<Symbol>(ch));
+        auto sym_it = state_it->second.find(ch);
         if (sym_it == state_it->second.end()) {
             std::cout << "Нет перехода по символу '" << ch << "'\n";
             break; // переход не определён
@@ -29,7 +32,7 @@ State func_transition::transit(const std::string& input, State current,
     return current;
 }
 
-template char func_transition::transit<char, char>(
-    const std::string&,
-    char,
-    const std::unordered_map<char, std::unordered_map<char, char>>&);
+template string func_transition::transit<string, string>(
+    const vector<string>&,
+    string,
+    const std::unordered_map<string, std::unordered_map<string, string>>&);
