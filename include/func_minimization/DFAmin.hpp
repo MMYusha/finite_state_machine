@@ -17,6 +17,7 @@ vector<vector<string>> DFAmin(
 }
 unordered_map<string, unordered_map<string, string>> CreateNewTransitions(
     const unordered_map<string, unordered_map<string, string>>& oldTransitions,
+    vector<string> alphabet,
     vector<vector<string>> P);
 
 #endif // func_minimization_DFAmin_HPP_

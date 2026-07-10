@@ -75,7 +75,7 @@ int main() {
     }
     printf("\n");
 
-    unordered_map<string, unordered_map<string, string>> NewTransitions = CreateNewTransitions(res.transitions, P);
+    unordered_map<string, unordered_map<string, string>> NewTransitions = CreateNewTransitions(res.transitions, res.alphabet, P);
 
     writeDFA("output.csv", res);
 

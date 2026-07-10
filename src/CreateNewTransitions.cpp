@@ -8,6 +8,7 @@ using namespace func_minimization;
 
 unordered_map<string, unordered_map<string, string>> CreateNewTransitions(
     const unordered_map<string, unordered_map<string, string>>& oldTransitions,
+    vector<string> alphabet,
     vector<vector<string>> P){
     
     unordered_map<string, unordered_map<string, string>> NewTransitions;
