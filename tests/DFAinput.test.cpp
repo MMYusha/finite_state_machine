@@ -83,3 +83,148 @@ TEST(DFATests, DFAinputTest1) {
     // Очистка: удаляем временный файл
     remove(filename.c_str());
 }
+
+TEST(DFATests, DFAinputTest2_ParityOfOnes) {
+    // ARRANGE
+    string filename = "test_dfa_parity.csv";
+    ofstream file(filename);
+    ASSERT_TRUE(file.is_open());
+
+    // Формат: 5 столбцов (как в примере)
+    file << "переход;0;1;;\n";                     // пример входной строки (пустая)
+    file << "допустимые состояния;Even;;;\n";      // допускающее состояние
+    file << "Начальное состояние;Even;;;\n";
+    file << "состояния/алфавит;0;1;;\n";           // алфавит
+    file << "Even;Even;Odd;;\n";                  // переходы из Even
+    file << "Odd;Odd;Even;;\n";                   // переходы из Odd
+    file.close();
+
+    // ACT
+    Result res = DFAinput(filename);
+
+    // ASSERT
+    vector<string> expectedStringTransition = {"0", "1"}; // первая строка: переход;0;1;;
+    ASSERT_EQ(expectedStringTransition, res.string_transition);
+
+    vector<string> expectedPermited = {"Even"};
+    ASSERT_EQ(expectedPermited, res.permited_state);
+
+    ASSERT_EQ("Even", res.start_state);
+
+    vector<string> expectedAlphabet = {"0", "1"};
+    ASSERT_EQ(expectedAlphabet, res.alphabet);
+
+    vector<string> expectedStates = {"Even", "Odd"};
+    ASSERT_EQ(expectedStates, res.states);
+
+    unordered_map<string, unordered_map<string, string>> expectedTransitions;
+    expectedTransitions["Even"]["0"] = "Even";
+    expectedTransitions["Even"]["1"] = "Odd";
+    expectedTransitions["Odd"]["0"] = "Odd";
+    expectedTransitions["Odd"]["1"] = "Even";
+
+    ASSERT_EQ(expectedTransitions.size(), res.transitions.size());
+    for (const auto& [state, trans] : expectedTransitions) {
+        auto it = res.transitions.find(state);
+        ASSERT_NE(it, res.transitions.end()) << "Отсутствует состояние " << state;
+        ASSERT_EQ(trans, it->second) << "Неверные переходы для состояния " << state;
+    }
+
+    remove(filename.c_str());
+}
+
+TEST(DFATests, DFAinputTest3_EndsWith01) {
+    // ARRANGE
+    string filename = "test_dfa_ends01.csv";
+    ofstream file(filename);
+    ASSERT_TRUE(file.is_open());
+
+    file << "переход;0;1;0;1\n";                     // пример строки "01"
+    file << "допустимые состояния;S01;;;\n";
+    file << "Начальное состояние;S;;;\n";
+    file << "состояния/алфавит;0;1;;\n";
+    file << "S;S0;S;;\n";                            // S по 0 -> S0, по 1 -> S
+    file << "S0;S0;S01;;\n";                         // S0 по 0 -> S0, по 1 -> S01
+    file << "S01;S0;S;;\n";                          // S01 по 0 -> S0, по 1 -> S
+    file.close();
+
+    // ACT
+    Result res = DFAinput(filename);
+
+    // ASSERT
+    vector<string> expectedStringTransition = {"0", "1", "0", "1"};
+    ASSERT_EQ(expectedStringTransition, res.string_transition);
+
+    vector<string> expectedPermited = {"S01"};
+    ASSERT_EQ(expectedPermited, res.permited_state);
+
+    ASSERT_EQ("S", res.start_state);
+
+    vector<string> expectedAlphabet = {"0", "1"};
+    ASSERT_EQ(expectedAlphabet, res.alphabet);
+
+    vector<string> expectedStates = {"S", "S0", "S01"};
+    ASSERT_EQ(expectedStates, res.states);
+
+    unordered_map<string, unordered_map<string, string>> expectedTransitions;
+    expectedTransitions["S"]["0"] = "S0";
+    expectedTransitions["S"]["1"] = "S";
+    expectedTransitions["S0"]["0"] = "S0";
+    expectedTransitions["S0"]["1"] = "S01";
+    expectedTransitions["S01"]["0"] = "S0";
+    expectedTransitions["S01"]["1"] = "S";
+
+    ASSERT_EQ(expectedTransitions.size(), res.transitions.size());
+    for (const auto& [state, trans] : expectedTransitions) {
+        auto it = res.transitions.find(state);
+        ASSERT_NE(it, res.transitions.end()) << "Отсутствует состояние " << state;
+        ASSERT_EQ(trans, it->second) << "Неверные переходы для состояния " << state;
+    }
+
+    remove(filename.c_str());
+}
+
+TEST(DFATests, DFAinputTest4_SingleState) {
+    // ARRANGE
+    string filename = "test_dfa_single.csv";
+    ofstream file(filename);
+    ASSERT_TRUE(file.is_open());
+
+    file << "переход;0;1;;;;\n";                      // пример строки "01"
+    file << "допустимые состояния;A;;;\n";
+    file << "Начальное состояние;A;;;;;;\n";
+    file << "состояния/алфавит;0;1;;;;;\n";
+    file << "A;A;A;;;;\n";                            // петли по 0 и 1
+    file.close();
+
+    // ACT
+    Result res = DFAinput(filename);
+
+    // ASSERT
+    vector<string> expectedStringTransition = {"0", "1"};
+    ASSERT_EQ(expectedStringTransition, res.string_transition);
+
+    vector<string> expectedPermited = {"A"};
+    ASSERT_EQ(expectedPermited, res.permited_state);
+
+    ASSERT_EQ("A", res.start_state);
+
+    vector<string> expectedAlphabet = {"0", "1"};
+    ASSERT_EQ(expectedAlphabet, res.alphabet);
+
+    vector<string> expectedStates = {"A"};
+    ASSERT_EQ(expectedStates, res.states);
+
+    unordered_map<string, unordered_map<string, string>> expectedTransitions;
+    expectedTransitions["A"]["0"] = "A";
+    expectedTransitions["A"]["1"] = "A";
+
+    ASSERT_EQ(expectedTransitions.size(), res.transitions.size());
+    for (const auto& [state, trans] : expectedTransitions) {
+        auto it = res.transitions.find(state);
+        ASSERT_NE(it, res.transitions.end()) << "Отсутствует состояние " << state;
+        ASSERT_EQ(trans, it->second) << "Неверные переходы для состояния " << state;
+    }
+
+    remove(filename.c_str());
+}

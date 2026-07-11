@@ -16,6 +16,25 @@ vector<vector<string>> func_minimization::DFAmin(
     const vector<string>& F,
     const unordered_map<string, unordered_map<string, string>>& transitions) {
     
+
+
+    // ----- ПРОВЕРКИ ВХОДНЫХ ДАННЫХ -----
+    // 1) Все состояния из Q должны быть определены в transitions
+    for (const string& state : Q) {
+        if (transitions.find(state) == transitions.end()) {
+            throw invalid_argument("Состояние \"" + state + "\" не найдено в таблице переходов");
+        }
+    }
+
+    // 2) Все допускающие состояния из F должны присутствовать в Q
+    for (const string& state : F) {
+        if (find(Q.begin(), Q.end(), state) == Q.end()) {
+            throw invalid_argument("Допустимое состояние \"" + state + "\" не найдено в Q");
+        }
+    }
+    // ----- КОНЕЦ ПРОВЕРОК -----
+
+
     // Создание хэш-таблицы обратных переходов
     unordered_map<string, unordered_map<string, vector<string>>> Inv;
     for (string state : Q){ // перебор всех состояний
@@ -29,7 +48,7 @@ vector<vector<string>> func_minimization::DFAmin(
 
 
     //P←{F, Q∖F}
-    vector<unordered_set<string>> P;
+    vector<unordered_set<string>> P ;
     //добавление в разбиение P допускающих состояний
     P.push_back(unordered_set<string>(F.begin(), F.end()));
     
@@ -47,13 +66,16 @@ vector<vector<string>> func_minimization::DFAmin(
             Class[state] = 0;
         }
     }
-    P.push_back(unordered_set<string>(nonF.begin(),nonF.end()));
+    if (!nonF.empty()) {
+        P.push_back(unordered_set<string>(nonF.begin(), nonF.end()));
+    }
     
     // Инициализация очереди Queue
     queue<pair<int,string>> Queue;
-    for (string c : alphabet){ // alphabet = E
-        Queue.push({0, c});
-        Queue.push({1, c});
+    for (int idx = 0; idx < static_cast<int>(P.size()); ++idx) {
+        for (const string& c : alphabet) {
+            Queue.push({idx, c});
+        }
     }
 
     // Инициализация классов разбиения Class
