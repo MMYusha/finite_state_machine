@@ -32,6 +32,19 @@ vector<vector<string>> func_minimization::DFAmin(
             throw invalid_argument("Допустимое состояние \"" + state + "\" не найдено в Q");
         }
     }
+
+    // 3) Все символы, используемые в переходах, должны принадлежать алфавиту
+    unordered_set<string> alphabetSet(alphabet.begin(), alphabet.end());
+    for (const auto& statePair : transitions) {
+        for (const auto& symPair : statePair.second) {
+            const string& symbol = symPair.first;
+            if (alphabetSet.find(symbol) == alphabetSet.end()) {
+                throw invalid_argument(
+                    "Symbol \"" + symbol + "\" used in transitions but not in alphabet"
+                );
+            }
+        }
+    }
     // ----- КОНЕЦ ПРОВЕРОК -----
 
 
