@@ -12,26 +12,51 @@ using namespace func_input;
 using namespace std;
 
 
-TEST(DFATests, TransitTest) {
+TEST(DFATests, TransitTest1) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
      system("chcp 65001 > nul"); 
-    // Типы для читаемости
+    // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
+    
+    // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
     using State = string;
     using Symbol = string;
 
-    // Чтение ДКА из csv файла
-    string filename = "input.csv";
-    Result res;
-    res = DFAinput(filename);
+    // Вложенная хеш-таблица переходов:
+    // состояние -> (символ -> следующее состояние)
+    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
 
-    // Инициализация ДКА
-    State current = res.start_state;
-    vector<string> F = res.permited_state;
-    vector<string> input = res.string_transition; // пример входной строки из файла
-    vector<string> E = res.alphabet;
-    vector<string> Q = res.states;
-    unordered_map<string, unordered_map<string, string>> transitions = res.transitions;
+    // Заполнение переходов согласно таблице
+    transitions["A"]["0"] = "B";
+    transitions["A"]["1"] = "F";
+
+    transitions["B"]["0"] = "G";
+    transitions["B"]["1"] = "C";
+
+    transitions["C"]["0"] = "A";
+    transitions["C"]["1"] = "C";
+
+    transitions["D"]["0"] = "C";
+    transitions["D"]["1"] = "G";
+
+    transitions["E"]["0"] = "H";
+    transitions["E"]["1"] = "F";
+
+    transitions["F"]["0"] = "C";
+    transitions["F"]["1"] = "G";
+
+    transitions["G"]["0"] = "G";
+    transitions["G"]["1"] = "E";
+
+    transitions["H"]["0"] = "G";
+    transitions["H"]["1"] = "C";
+
+    string start = "A";                 // начальное состояние
+    string current = start;
+
+    vector<string> Q = {"A", "B", "C", "D", "E", "F", "G", "H"}; // множество состояний
+    vector<string> E = {"0","1"};
+    vector<string> F = {"C"};           // множество допустимых состояний
 
 
     // ACT - это само действие; именно то, что нам нужно проверить
@@ -57,6 +82,7 @@ TEST(DFATests, TransitTest) {
     ASSERT_EQ("C", final_state4);
     ASSERT_EQ("A", final_state5);
 }
+
 
 
 // если материал выше легко усвоили, почитайте также про TEST_F (test fixtures) и setup/teardown

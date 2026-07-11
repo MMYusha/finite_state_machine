@@ -8,6 +8,9 @@ enable_testing()
 # что иногда полезно на больших проектах, особенно с долгим рантаймом
 add_executable(my_DFA_test
     transit.test.cpp
+    DFAmin.test.cpp
+    CreaateNewTransitions.test.cpp
+    DFAinput.test.cpp
 )
 
 # линкуемся нашей библиотекой, а также с дефолтным мейном, чтобы не засорять им кодовую базу
@@ -16,7 +19,9 @@ add_executable(my_DFA_test
 target_link_libraries(my_DFA_test PRIVATE
     GTest::gtest_main
     func_transition
-    func_input  
+    func_minimization
+    func_input
+
 )
 
 # в данном случае не нужно, но в ваших серьезных проектах в тесты надо будет подключать публичные и приватные хэдеры
