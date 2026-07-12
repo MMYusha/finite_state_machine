@@ -97,7 +97,40 @@ vector<vector<string>> func_minimization::DFAmin(
     vector<int> Count(Q.size(), 0);
     vector<int> Twin(Q.size(), 0);
     vector<int> Involved;
+
+
+    long long iterations = 0;
+    const long long MAX_ITERATIONS = 10000000; // 10 миллионов – запас
+
+
     while (!Queue.empty()){
+        ++iterations;
+        //====================================================================
+        // ----- ДОБАВЛЕНО: защита от бесконечного роста классов -----
+        if (P.size() > Q.size()) {
+            throw std::runtime_error(
+                "Количество классов превысило число состояний: " + 
+                std::to_string(P.size()) + " > " + std::to_string(Q.size())
+            );
+        }
+
+        // ----- ДОБАВЛЕНО: периодический вывод прогресса -----
+        if (iterations % 100000 == 0) {
+            std::cout << "[DFAmin] Iteration " << iterations 
+                      << ", classes: " << P.size() 
+                      << ", queue: " << Queue.size() << std::endl;
+        }
+
+        // ----- ДОБАВЛЕНО: защита от бесконечного цикла -----
+        if (iterations > MAX_ITERATIONS) {
+            throw std::runtime_error(
+                "Превышено максимальное число итераций (" + 
+                std::to_string(MAX_ITERATIONS) + ")"
+            );
+        }
+        //=======================================================================
+
+
         // Получение пары из очереди [индекс класса Сплиттера, символ алфавита]
         auto [C, a] = Queue.front();
         Queue.pop();
@@ -117,9 +150,9 @@ vector<vector<string>> func_minimization::DFAmin(
 
         // Проверка возможности разбиения классов в Involved по сплиттеру С
         for (int i : Involved){
-            if (Count[i] < static_cast<int>(P[i].size())){
-                P.push_back({}); // создадим пустой класс в разбиении P
-                Twin[i] = static_cast<int>(P.size()) - 1; // индекс нового класса под разбиение
+            if (Count[i] > 0 && Count[i] < static_cast<int>(P[i].size()) && P.size() < Q.size()) {//-------------------------------------
+                P.push_back({});
+                Twin[i] = static_cast<int>(P.size()) - 1;
             }
         }
 

@@ -8,6 +8,7 @@ target_link_libraries(main PRIVATE
     func_minimization
     func_transition
     func_input
+    func_benchmark
 )
 
 # флаги компиляции для всех исходников приложения

@@ -7,11 +7,13 @@
 #include <func_transition/transit.hpp>
 #include <func_minimization/DFAmin.hpp>
 #include <func_input/DFAinput.hpp>
+#include <func_benchmark/benchmark.hpp>
 
 using namespace std;
 using namespace func_transition;
 using namespace func_minimization;
 using namespace func_input;
+
 
 
 int main() {
@@ -60,7 +62,7 @@ int main() {
 
     // Обработка строки перехода
     State final_state = transit(input, current, transitions);
-    cout << "Переход в состояние" << final_state << " из начального "<< res.start_state  << "\n\n";
+    cout << "Переход в состояние " << final_state << " из начального "<< res.start_state  << "\n\n";
 
     
     // Минимизация ДКА
@@ -77,6 +79,16 @@ int main() {
 
     res = CreateNewTransitions(res, P);
     writeDFA("output.csv", res);
+
+    int min_states=2;
+    int max_states=1000;
+    int step=10;
+    int alphabet_size=10;
+    string mode = "full";
+    int repetitions=100;
+    int seed=42;
+
+    func_benchmark::run_benchmark(min_states,max_states,step, alphabet_size, mode, repetitions, seed);
 
     
     return 0;

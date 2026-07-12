@@ -14,6 +14,10 @@ add_library(func_input STATIC
     DFAinput.cpp
     writeDFA.cpp
 )
+add_library(func_benchmark STATIC
+    benchmark.cpp
+)
+
 # делаем доступными публичные заголовочные файлы
 # благодаря этому в sum.cpp заголовочный файл мы подключаем как системный
 target_include_directories(func_transition
@@ -31,6 +35,11 @@ target_include_directories(func_input
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
+target_include_directories(func_benchmark
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+)
 
 # флаги компиляции для target'а, в данном случае для всех исходников нашей библиотеки
 # флаги -Wall -Wextra -Wpedantic рекомендую включать на всех проектах
@@ -43,5 +52,8 @@ target_compile_options(func_minimization PRIVATE
     -Wall -Wextra -Wpedantic
 )
 target_compile_options(func_input PRIVATE
+    -Wall -Wextra -Wpedantic
+)
+target_compile_options(func_benchmark PRIVATE
     -Wall -Wextra -Wpedantic
 )
