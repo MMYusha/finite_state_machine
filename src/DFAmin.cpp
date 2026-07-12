@@ -16,6 +16,38 @@ vector<vector<string>> func_minimization::DFAmin(
     const vector<string>& F,
     const unordered_map<string, unordered_map<string, string>>& transitions) {
     
+
+
+    // ----- ПРОВЕРКИ ВХОДНЫХ ДАННЫХ -----
+    // 1) Все состояния из Q должны быть определены в transitions
+    for (const string& state : Q) {
+        if (transitions.find(state) == transitions.end()) {
+            throw invalid_argument("Состояние \"" + state + "\" не найдено в таблице переходов");
+        }
+    }
+
+    // 2) Все допускающие состояния из F должны присутствовать в Q
+    for (const string& state : F) {
+        if (find(Q.begin(), Q.end(), state) == Q.end()) {
+            throw invalid_argument("Допустимое состояние \"" + state + "\" не найдено в Q");
+        }
+    }
+
+    // 3) Все символы, используемые в переходах, должны принадлежать алфавиту
+    unordered_set<string> alphabetSet(alphabet.begin(), alphabet.end());
+    for (const auto& statePair : transitions) {
+        for (const auto& symPair : statePair.second) {
+            const string& symbol = symPair.first;
+            if (alphabetSet.find(symbol) == alphabetSet.end()) {
+                throw invalid_argument(
+                    "Symbol \"" + symbol + "\" used in transitions but not in alphabet"
+                );
+            }
+        }
+    }
+    // ----- КОНЕЦ ПРОВЕРОК -----
+
+
     // Создание хэш-таблицы обратных переходов
     unordered_map<string, unordered_map<string, vector<string>>> Inv;
     for (string state : Q){ // перебор всех состояний
@@ -29,7 +61,7 @@ vector<vector<string>> func_minimization::DFAmin(
 
 
     //P←{F, Q∖F}
-    vector<unordered_set<string>> P;
+    vector<unordered_set<string>> P ;
     //добавление в разбиение P допускающих состояний
     P.push_back(unordered_set<string>(F.begin(), F.end()));
     
@@ -47,13 +79,16 @@ vector<vector<string>> func_minimization::DFAmin(
             Class[state] = 0;
         }
     }
-    P.push_back(unordered_set<string>(nonF.begin(),nonF.end()));
+    if (!nonF.empty()) {
+        P.push_back(unordered_set<string>(nonF.begin(), nonF.end()));
+    }
     
     // Инициализация очереди Queue
     queue<pair<int,string>> Queue;
-    for (string c : alphabet){ // alphabet = E
-        Queue.push({0, c});
-        Queue.push({1, c});
+    for (int idx = 0; idx < static_cast<int>(P.size()); ++idx) {
+        for (const string& c : alphabet) {
+            Queue.push({idx, c});
+        }
     }
 
     // Инициализация классов разбиения Class
@@ -62,7 +97,40 @@ vector<vector<string>> func_minimization::DFAmin(
     vector<int> Count(Q.size(), 0);
     vector<int> Twin(Q.size(), 0);
     vector<int> Involved;
+
+
+    long long iterations = 0;
+    const long long MAX_ITERATIONS = 10000000; // 10 миллионов – запас
+
+
     while (!Queue.empty()){
+        ++iterations;
+        //====================================================================
+        // ----- ДОБАВЛЕНО: защита от бесконечного роста классов -----
+        if (P.size() > Q.size()) {
+            throw std::runtime_error(
+                "Количество классов превысило число состояний: " + 
+                std::to_string(P.size()) + " > " + std::to_string(Q.size())
+            );
+        }
+
+        // ----- ДОБАВЛЕНО: периодический вывод прогресса -----
+        if (iterations % 100000 == 0) {
+            std::cout << "[DFAmin] Iteration " << iterations 
+                      << ", classes: " << P.size() 
+                      << ", queue: " << Queue.size() << std::endl;
+        }
+
+        // ----- ДОБАВЛЕНО: защита от бесконечного цикла -----
+        if (iterations > MAX_ITERATIONS) {
+            throw std::runtime_error(
+                "Превышено максимальное число итераций (" + 
+                std::to_string(MAX_ITERATIONS) + ")"
+            );
+        }
+        //=======================================================================
+
+
         // Получение пары из очереди [индекс класса Сплиттера, символ алфавита]
         auto [C, a] = Queue.front();
         Queue.pop();
@@ -82,9 +150,9 @@ vector<vector<string>> func_minimization::DFAmin(
 
         // Проверка возможности разбиения классов в Involved по сплиттеру С
         for (int i : Involved){
-            if (Count[i] < static_cast<int>(P[i].size())){
-                P.push_back({}); // создадим пустой класс в разбиении P
-                Twin[i] = static_cast<int>(P.size()) - 1; // индекс нового класса под разбиение
+            if (Count[i] > 0 && Count[i] < static_cast<int>(P[i].size()) && P.size() < Q.size()) {//-------------------------------------
+                P.push_back({});
+                Twin[i] = static_cast<int>(P.size()) - 1;
             }
         }
 

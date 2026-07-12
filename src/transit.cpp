@@ -26,9 +26,9 @@ State func_transition::transit(const vector<Symbol>& input, State current,
 
         // Выполняем переход
         current = sym_it->second;
-        std::cout << "Переход по '" << ch << "' → состояние " << current << "\n";
+        //std::cout << "Переход по '" << ch << "' → состояние " << current << "\n";
     }
-    std::cout << "\n";
+    //std::cout << "\n";
     return current;
 }
 

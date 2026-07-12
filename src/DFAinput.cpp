@@ -73,7 +73,9 @@ func_input::Result func_input::DFAinput(string filename) {
             }
             else{
                 if (count_alphabet < res.alphabet.size()){
-                    res.transitions[current_state][res.alphabet[count_alphabet]] = token;
+                    if (!token.empty()){
+                        res.transitions[current_state][res.alphabet[count_alphabet]] = token;  
+                    }
                     ++count_alphabet;
                 }
                 else break;

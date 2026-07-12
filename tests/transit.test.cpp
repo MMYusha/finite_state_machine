@@ -12,26 +12,51 @@ using namespace func_input;
 using namespace std;
 
 
-TEST(DFATests, TransitTest) {
+TEST(DFATests, TransitTest1) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
      system("chcp 65001 > nul"); 
-    // Типы для читаемости
+    // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
+    
+    // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
     using State = string;
     using Symbol = string;
 
-    // Чтение ДКА из csv файла
-    string filename = "input.csv";
-    Result res;
-    res = DFAinput(filename);
+    // Вложенная хеш-таблица переходов:
+    // состояние -> (символ -> следующее состояние)
+    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
 
-    // Инициализация ДКА
-    State current = res.start_state;
-    vector<string> F = res.permited_state;
-    vector<string> input = res.string_transition; // пример входной строки из файла
-    vector<string> E = res.alphabet;
-    vector<string> Q = res.states;
-    unordered_map<string, unordered_map<string, string>> transitions = res.transitions;
+    // Заполнение переходов согласно таблице
+    transitions["A"]["0"] = "B";
+    transitions["A"]["1"] = "F";
+
+    transitions["B"]["0"] = "G";
+    transitions["B"]["1"] = "C";
+
+    transitions["C"]["0"] = "A";
+    transitions["C"]["1"] = "C";
+
+    transitions["D"]["0"] = "C";
+    transitions["D"]["1"] = "G";
+
+    transitions["E"]["0"] = "H";
+    transitions["E"]["1"] = "F";
+
+    transitions["F"]["0"] = "C";
+    transitions["F"]["1"] = "G";
+
+    transitions["G"]["0"] = "G";
+    transitions["G"]["1"] = "E";
+
+    transitions["H"]["0"] = "G";
+    transitions["H"]["1"] = "C";
+
+    string start = "A";                 // начальное состояние
+    string current = start;
+
+    vector<string> Q = {"A", "B", "C", "D", "E", "F", "G", "H"}; // множество состояний
+    vector<string> E = {"0","1"};
+    vector<string> F = {"C"};           // множество допустимых состояний
 
 
     // ACT - это само действие; именно то, что нам нужно проверить
@@ -56,6 +81,72 @@ TEST(DFATests, TransitTest) {
     ASSERT_EQ("B", final_state3);
     ASSERT_EQ("C", final_state4);
     ASSERT_EQ("A", final_state5);
+}
+TEST(DFATests, TransitTest2) {
+    system("chcp 65001 > nul");
+
+    // ARRANGE: автомат с двумя состояниями: "Even" и "Odd"
+    using State = std::string;
+    using Symbol = std::string;
+
+    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    transitions["Even"]["0"] = "Even";
+    transitions["Even"]["1"] = "Odd";
+    transitions["Odd"]["0"]  = "Odd";
+    transitions["Odd"]["1"]  = "Even";
+
+    State start = "Even";
+    std::vector<std::string> Q = {"Even", "Odd"};
+    std::vector<std::string> E = {"0", "1"};
+    std::vector<std::string> F = {"Even"};  // допускающее – чётное число единиц
+
+    // ACT: подаём строки с разным числом единиц
+    State res1 = func_transition::transit({"0", "1", "0", "1"}, start, transitions); // две единицы -> Even
+    State res2 = func_transition::transit({"1", "0", "1"}, start, transitions);      // две единицы -> Even
+    State res3 = func_transition::transit({"1", "1", "1"}, start, transitions);      // три единицы -> Odd
+    State res4 = func_transition::transit({}, start, transitions);                   // пустая строка -> Even
+
+    // ASSERT
+    ASSERT_EQ("Even", res1);
+    ASSERT_EQ("Even", res2);
+    ASSERT_EQ("Odd",  res3);
+    ASSERT_EQ("Even", res4);
+}
+
+TEST(DFATests, TransitTest3) {
+    system("chcp 65001 > nul");
+
+    // ARRANGE: состояния: S (начальное, ничего не накоплено),
+    // S0 (последний символ – 0), S01 (последние два – 01 – допускающее)
+    using State = std::string;
+    using Symbol = std::string;
+
+    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    transitions["S"]["0"]  = "S0";
+    transitions["S"]["1"]  = "S";
+    transitions["S0"]["0"] = "S0";
+    transitions["S0"]["1"] = "S01";
+    transitions["S01"]["0"]= "S0";
+    transitions["S01"]["1"]= "S";
+
+    State start = "S";
+    std::vector<std::string> Q = {"S", "S0", "S01"};
+    std::vector<std::string> E = {"0", "1"};
+    std::vector<std::string> F = {"S01"};
+
+    // ACT
+    State res1 = func_transition::transit({"0", "1"}, start, transitions);           // "01" -> S01
+    State res2 = func_transition::transit({"1", "0", "1"}, start, transitions);      // "101" -> S01
+    State res3 = func_transition::transit({"0", "0", "1", "0"}, start, transitions); // "0010" -> S0 (не допускается)
+    State res4 = func_transition::transit({"1", "1"}, start, transitions);           // "11" -> S (не допускается)
+    State res5 = func_transition::transit({}, start, transitions);                   // пустая -> S (не допускается)
+
+    // ASSERT
+    ASSERT_EQ("S01", res1);
+    ASSERT_EQ("S01", res2);
+    ASSERT_EQ("S0",  res3);
+    ASSERT_EQ("S",   res4);
+    ASSERT_EQ("S",   res5);
 }
 
 
