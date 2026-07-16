@@ -90,6 +90,7 @@ int main() {
 
     func_benchmark::run_benchmark(min_states,max_states,step, alphabet_size, mode, repetitions, seed);
 
-    
+    std::cout << "Нажмите Enter, чтобы закрыть окно...";
+    std::cin.get();  // ждёт нажатия Enter
     return 0;
 }

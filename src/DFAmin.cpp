@@ -45,6 +45,20 @@ vector<vector<string>> func_minimization::DFAmin(
             }
         }
     }
+
+    // 4) Входные данные не пустые
+    if (alphabet.empty()) {
+        throw std::invalid_argument("Алфавит не может быть пустым");
+    }
+    if (Q.empty()) {
+        throw std::invalid_argument("Множество состояний не может быть пустым");
+    }
+    if (F.empty()) {
+        throw std::invalid_argument("Множество допускающих состояний не может быть пустым");
+    }
+    if (transitions.empty()) {
+        throw std::invalid_argument("Таблица переходов не может быть пустой");
+    }
     // ----- КОНЕЦ ПРОВЕРОК -----
 
 
