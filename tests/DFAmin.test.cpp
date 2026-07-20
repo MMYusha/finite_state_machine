@@ -25,7 +25,7 @@ void sortClasses(std::vector<std::vector<std::string>>& v) {
 }
 
 
-TEST(DFATests, DFAminTest1) {
+TEST(DFATests, DFAminTest1_RealDFA_1) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
     // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
@@ -74,8 +74,177 @@ TEST(DFATests, DFAminTest1) {
     
     // ASSERT - проверка результатов; именно ASSERT определяет, пройден тест или нет
     vector<vector<string>> Ptrue = {{"C"},{"D","F"},{"B","H"},{"G"},{"A","E"}};
-    ASSERT_EQ(Ptrue, P);    
+    auto P_sorted = P;                 // копируем фактический результат
+    auto expected_sorted = Ptrue;      // копируем ожидаемый
+    sortClasses(P_sorted);
+    sortClasses(expected_sorted);
+    ASSERT_EQ(expected_sorted, P_sorted);    
 }
+
+
+TEST(DFATests, DFAminTest1_RealDFA_2) {
+    // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
+    
+    // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
+    using State = string;
+    using Symbol = string;
+
+    // Вложенная хеш-таблица переходов:
+    // состояние -> (символ -> следующее состояние)
+    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+
+    // Заполнение переходов согласно таблице
+    transitions["0"]["a"] = "1";
+    transitions["0"]["b"] = "2";
+
+    transitions["1"]["a"] = "7";
+    transitions["1"]["b"] = "3";
+
+    transitions["2"]["a"] = "5";
+    transitions["2"]["b"] = "0";
+
+    transitions["3"]["a"] = "3";
+    transitions["3"]["b"] = "4";
+
+    transitions["4"]["a"] = "2";
+    transitions["4"]["b"] = "6";
+
+    transitions["5"]["a"] = "5";
+    transitions["5"]["b"] = "6";
+
+    transitions["6"]["a"] = "3";
+    transitions["6"]["b"] = "4";
+
+    transitions["7"]["a"] = "5";
+    transitions["7"]["b"] = "3";
+
+
+    string start = "0";                 // начальное состояние
+    string current = start;
+
+    vector<string> Q = {"0", "1", "2", "3", "4", "5", "6", "7"}; // множество состояний
+    vector<string> E = {"a","b"};
+    vector<string> F = {"3", "4", "6",};           // множество допустимых состояний
+
+    // ACT - это само действие; именно то, что нам нужно проверить
+    vector<vector<string>> P = DFAmin(E,Q,F,transitions);
+
+    
+    // ASSERT - проверка результатов; именно ASSERT определяет, пройден тест или нет
+    vector<vector<string>> Ptrue = {{"0","2"},{"1","5","7"},{"3","6"},{"4"}};
+    auto P_sorted = P;                 // копируем фактический результат
+    auto expected_sorted = Ptrue;      // копируем ожидаемый
+    sortClasses(P_sorted);
+    sortClasses(expected_sorted);
+    ASSERT_EQ(expected_sorted, P_sorted);    
+}
+
+
+TEST(DFATests, DFAminTest1_RealDFA_3) {
+    // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
+    
+    // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
+    using State = string;
+    using Symbol = string;
+
+    // Вложенная хеш-таблица переходов:
+    // состояние -> (символ -> следующее состояние)
+    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+
+    // Заполнение переходов согласно таблице
+    transitions["0"]["a"] = "1";
+    transitions["0"]["b"] = "0";
+    transitions["0"]["c"] = "0";
+
+    transitions["1"]["a"] = "1";
+    transitions["1"]["b"] = "2";
+    transitions["1"]["c"] = "0";
+
+    transitions["2"]["a"] = "1";
+    transitions["2"]["b"] = "0";
+    transitions["2"]["c"] = "3";
+
+    transitions["3"]["a"] = "3";
+    transitions["3"]["b"] = "3";
+    transitions["3"]["c"] = "3";
+
+    vector<string> alphabet = {"a", "b", "c"};
+    vector<string> Q = {"0", "1", "2", "3"};
+    vector<string> F = {"3"};   // только состояние 3 допускающее
+
+    // ACT
+    auto P = DFAmin(alphabet, Q, F, transitions);
+
+    // ASSERT: все состояния различны → 4 класса по одному состоянию
+    vector<vector<string>> Ptrue = {
+        {"0"},
+        {"1"},
+        {"2"},
+        {"3"}
+    };
+
+    auto P_sorted = P;                 // копируем фактический результат
+    auto expected_sorted = Ptrue;      // копируем ожидаемый
+    sortClasses(P_sorted);
+    sortClasses(expected_sorted);
+    ASSERT_EQ(expected_sorted, P_sorted);    
+}
+
+TEST(DFATests, DFAminTest1_UnreachableStates) {
+    // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
+    
+    // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
+    using State = string;
+    using Symbol = string;
+
+    // Вложенная хеш-таблица переходов:
+    // состояние -> (символ -> следующее состояние)
+    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+
+    // Заполнение переходов согласно таблице
+    transitions["A"]["0"] = "B";
+    transitions["A"]["1"] = "C";
+
+    //transitions["B"]["0"] = "";
+    transitions["B"]["1"] = "D";
+
+    transitions["C"]["0"] = "D";
+    transitions["C"]["1"] = "E";
+
+    //transitions["D"]["0"] = "";
+    transitions["D"]["1"] = "E";
+
+    transitions["E"]["0"] = "B";
+    transitions["E"]["1"] = "D";
+
+    transitions["F"]["0"] = "G";
+    transitions["F"]["1"] = "E";
+
+    transitions["G"]["0"] = "F";
+    transitions["G"]["1"] = "D";
+
+
+    vector<string> alphabet = {"0", "1"};
+    vector<string> Q = {"A", "B", "C", "D", "E", "F", "G"};
+    vector<string> F = {"E", "D"};   // только состояние 3 допускающее
+
+    // ACT
+    auto P = DFAmin(alphabet, Q, F, transitions);
+
+    // ASSERT: все состояния различны → 4 класса по одному состоянию
+    vector<vector<string>> Ptrue = {
+        {"A"},
+        {"B", "C"},
+        {"D", "E"}
+    };
+
+    auto P_sorted = P;                 // копируем фактический результат
+    auto expected_sorted = Ptrue;      // копируем ожидаемый
+    sortClasses(P_sorted);
+    sortClasses(expected_sorted);
+    ASSERT_EQ(expected_sorted, P_sorted);    
+}
+
 
 TEST(DFATests, DFAminTest2_AllEquivalent) {
     // ARRANGE
