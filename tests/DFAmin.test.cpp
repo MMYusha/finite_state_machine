@@ -73,7 +73,7 @@ TEST(DFATests, DFAminTest1_RealDFA_1) {
 
     
     // ASSERT - проверка результатов; именно ASSERT определяет, пройден тест или нет
-    vector<vector<string>> Ptrue = {{"C"},{"D","F"},{"B","H"},{"G"},{"A","E"}};
+    vector<vector<string>> Ptrue = {{"C"},{"F"},{"B","H"},{"G"},{"A","E"}};
     auto P_sorted = P;                 // копируем фактический результат
     auto expected_sorted = Ptrue;      // копируем ожидаемый
     sortClasses(P_sorted);
@@ -205,13 +205,13 @@ TEST(DFATests, DFAminTest1_UnreachableStates) {
     transitions["A"]["0"] = "B";
     transitions["A"]["1"] = "C";
 
-    //transitions["B"]["0"] = "";
+    //transitions["B"]["0"] = "B";
     transitions["B"]["1"] = "D";
 
     transitions["C"]["0"] = "D";
     transitions["C"]["1"] = "E";
 
-    //transitions["D"]["0"] = "";
+    //transitions["D"]["0"] = "D";
     transitions["D"]["1"] = "E";
 
     transitions["E"]["0"] = "B";
@@ -226,17 +226,13 @@ TEST(DFATests, DFAminTest1_UnreachableStates) {
 
     vector<string> alphabet = {"0", "1"};
     vector<string> Q = {"A", "B", "C", "D", "E", "F", "G"};
-    vector<string> F = {"E", "D"};   // только состояние 3 допускающее
+    vector<string> F = {"E", "D"};   
 
     // ACT
     auto P = DFAmin(alphabet, Q, F, transitions);
 
-    // ASSERT: все состояния различны → 4 класса по одному состоянию
-    vector<vector<string>> Ptrue = {
-        {"A"},
-        {"B", "C"},
-        {"D", "E"}
-    };
+    // ASSERT
+    vector<vector<string>> Ptrue =  { { "A" }, { "B" }, { "C" }, { "D" }, { "E" } };
 
     auto P_sorted = P;                 // копируем фактический результат
     auto expected_sorted = Ptrue;      // копируем ожидаемый
@@ -246,27 +242,83 @@ TEST(DFATests, DFAminTest1_UnreachableStates) {
 }
 
 
-TEST(DFATests, DFAminTest2_AllEquivalent) {
-    // ARRANGE
-    using State = std::string;
-    using Symbol = std::string;
+TEST(DFATests, DFAminTest2_Idempotency) {
+    // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
+    
+    // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
+    using State = string;
+    using Symbol = string;
 
+    // Вложенная хеш-таблица переходов:
+    // состояние -> (символ -> следующее состояние)
     std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
-    transitions["A"]["0"] = "A";
-    transitions["A"]["1"] = "A";
-    transitions["B"]["0"] = "B";
-    transitions["B"]["1"] = "B";
 
-    std::vector<std::string> Q = {"A", "B"};
-    std::vector<std::string> E = {"0", "1"};
-    std::vector<std::string> F = {"A", "B"};   // оба допускающие
+    // Заполнение переходов согласно таблице
+    transitions["A"]["0"] = "B";
+    transitions["A"]["1"] = "F";
 
-    // ACT
-    auto P = func_minimization::DFAmin(E, Q, F, transitions);
+    transitions["B"]["0"] = "G";
+    transitions["B"]["1"] = "C";
 
-    // ASSERT: все состояния эквивалентны – один класс
-    std::vector<std::vector<std::string>> expected = {{"A", "B"}};
-    ASSERT_EQ(expected, P);
+    transitions["C"]["0"] = "A";
+    transitions["C"]["1"] = "C";
+
+    transitions["D"]["0"] = "C";
+    transitions["D"]["1"] = "G";
+
+    transitions["E"]["0"] = "H";
+    transitions["E"]["1"] = "F";
+
+    transitions["F"]["0"] = "C";
+    transitions["F"]["1"] = "G";
+
+    transitions["G"]["0"] = "G";
+    transitions["G"]["1"] = "E";
+
+    transitions["H"]["0"] = "G";
+    transitions["H"]["1"] = "C";
+
+    string start = "A";                 // начальное состояние
+    string current = start;
+
+    vector<string> Q = {"A", "B", "C", "D", "E", "F", "G", "H"}; // множество состояний
+    vector<string> E = {"0","1"};
+    vector<string> F = {"C"};           // множество допустимых состояний
+
+    // ACT - это само действие; именно то, что нам нужно проверить
+    
+    // Инициализация ДКА
+    Result DFA;
+    //DFA.start_state = ;
+    DFA.permited_state = F;
+    //DFA.string_transition = ; // пример входной строки из файла
+    DFA.alphabet = E;
+    DFA.states = Q;
+    DFA.transitions = transitions;
+
+    // Минимизация (Разбиение на классы)
+    vector<vector<string>> P = DFAmin(E,Q,F,transitions);
+
+    // Получение описания нового автомата 
+    Result newDFA = CreateNewTransitions(DFA, P);
+
+    // Инициализация нового ДКА
+    vector<string> newF = newDFA.permited_state;
+    vector<string> newE = newDFA.alphabet;
+    vector<string> newQ = newDFA.states;
+    std::unordered_map<State, std::unordered_map<Symbol, State>> newTransitions = newDFA.transitions;
+
+    // Повторное разбиение
+    vector<vector<string>> newP = DFAmin(newE,newQ,newF,newTransitions); // 
+
+    
+    // ASSERT - проверка результатов; именно ASSERT определяет, пройден тест или нет
+    vector<vector<string>> Ptrue =  { { "A+E" }, { "B+H" }, { "C" }, { "F" }, { "G" } };
+    auto P_sorted = newP;                 // копируем фактический результат
+    auto expected_sorted = Ptrue;      // копируем ожидаемый
+    sortClasses(P_sorted);
+    sortClasses(expected_sorted);
+    ASSERT_EQ(expected_sorted, P_sorted);    
 }
 
 TEST(DFATests, DFAminTest3_AlreadyMinimal) {
@@ -517,7 +569,7 @@ TEST(DFAminTest_NotAllAlphabetUse, NotAllAlphabetUse) {
 
     
     // ASSERT - проверка результатов; именно ASSERT определяет, пройден тест или нет
-    vector<vector<string>> Ptrue = {{"C"},{"D","F"},{"B","H"},{"G"},{"A","E"}};
+    vector<vector<string>> Ptrue = {{"C"},{"F"},{"B","H"},{"G"},{"A","E"}};
     auto P_sorted = P;                 // копируем фактический результат
     auto expected_sorted = Ptrue;      // копируем ожидаемый
     sortClasses(P_sorted);

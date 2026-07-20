@@ -62,10 +62,71 @@ vector<vector<string>> func_minimization::DFAmin(
     // ----- КОНЕЦ ПРОВЕРОК -----
 
 
+    // ----- УДАЛЕНИЕ НЕДОСТИЖИМЫХ СОСТОЯНИЙ -----
+    // Создаём изменяемые копии
+    vector<string> localQ = Q;
+    vector<string> localF = F;
+    unordered_map<string, unordered_map<string, string>> localTransitions = transitions;
+
+    if (!localQ.empty()) {
+        string start_state = localQ[0];   // первое состояние считаем начальным
+        unordered_set<string> reachable;
+        queue<string> bfs;
+        bfs.push(start_state);
+        reachable.insert(start_state);
+
+        while (!bfs.empty()) {
+            string cur = bfs.front();
+            bfs.pop();
+            auto it = localTransitions.find(cur);
+            if (it != localTransitions.end()) {
+                for (const auto& symPair : it->second) {
+                    const string& next = symPair.second;
+                    if (reachable.find(next) == reachable.end()) {
+                        reachable.insert(next);
+                        bfs.push(next);
+                    }
+                }
+            }
+        }
+
+        // Формируем новые множества
+        vector<string> newQ;
+        unordered_map<string, unordered_map<string, string>> newTransitions;
+        for (const string& state : localQ) {
+            if (reachable.find(state) != reachable.end()) {
+                newQ.push_back(state);
+                auto it = localTransitions.find(state);
+                if (it != localTransitions.end()) {
+                    newTransitions[state] = it->second;
+                }
+            }
+        }
+
+        vector<string> newF;
+        for (const string& state : localF) {
+            if (reachable.find(state) != reachable.end()) {
+                newF.push_back(state);
+            }
+        }
+
+        // Заменяем локальные данные
+        localQ = std::move(newQ);
+        localF = std::move(newF);
+        localTransitions = std::move(newTransitions);
+
+        if (localQ.empty()) {
+            throw std::runtime_error("После удаления недостижимых состояний не осталось ни одного состояния");
+        }
+    }
+    // ----- КОНЕЦ УДАЛЕНИЯ -----
+
+
+
     // Создание хэш-таблицы обратных переходов
     unordered_map<string, unordered_map<string, vector<string>>> Inv;
-    for (string state : Q){ // перебор всех состояний
-        auto it = transitions.find(state);
+    for (string state : localQ){ // перебор всех состояний
+        auto it = localTransitions.find(state);
         for (auto pair : it->second){ // перебор всех переходов из состояния
             string symbol = pair.first; 
             string next  = pair.second;
@@ -77,14 +138,14 @@ vector<vector<string>> func_minimization::DFAmin(
     //P←{F, Q∖F}
     vector<unordered_set<string>> P ;
     //добавление в разбиение P допускающих состояний
-    P.push_back(unordered_set<string>(F.begin(), F.end()));
+    P.push_back(unordered_set<string>(localF.begin(), localF.end()));
     
     // добавление в разбиение P недопускающих состояний
     // Инициализация классов разбиения Class
     unordered_map<string, int> Class; // классы разбиения Class
-    unordered_set<string> setF(F.begin(), F.end()); //хэш-таблица для быстрого поиска
+    unordered_set<string> setF(localF.begin(), localF.end()); //хэш-таблица для быстрого поиска
     vector<string> nonF;
-    for (string state : Q){
+    for (string state : localQ){
         if (setF.find(state) == setF.end()){
             nonF.push_back(state);
             Class[state] = 1;
@@ -108,8 +169,8 @@ vector<vector<string>> func_minimization::DFAmin(
     // Инициализация классов разбиения Class
 
     // Основной цикл
-    vector<int> Count(Q.size(), 0);
-    vector<int> Twin(Q.size(), 0);
+    vector<int> Count(localQ.size(), 0);
+    vector<int> Twin(localQ.size(), 0);
     vector<int> Involved;
 
 
@@ -121,10 +182,10 @@ vector<vector<string>> func_minimization::DFAmin(
         ++iterations;
         //====================================================================
         // ----- ДОБАВЛЕНО: защита от бесконечного роста классов -----
-        if (P.size() > Q.size()) {
+        if (P.size() > localQ.size()) {
             throw std::runtime_error(
                 "Количество классов превысило число состояний: " + 
-                std::to_string(P.size()) + " > " + std::to_string(Q.size())
+                std::to_string(P.size()) + " > " + std::to_string(localQ.size())
             );
         }
 
@@ -164,7 +225,7 @@ vector<vector<string>> func_minimization::DFAmin(
 
         // Проверка возможности разбиения классов в Involved по сплиттеру С
         for (int i : Involved){
-            if (Count[i] > 0 && Count[i] < static_cast<int>(P[i].size()) && P.size() < Q.size()) {//-------------------------------------
+            if (Count[i] > 0 && Count[i] < static_cast<int>(P[i].size()) && P.size() < localQ.size()) {//-------------------------------------
                 P.push_back({});
                 Twin[i] = static_cast<int>(P.size()) - 1;
             }
@@ -189,6 +250,9 @@ vector<vector<string>> func_minimization::DFAmin(
             if (j != 0){
                 if (P[j].size()<P[i].size()){ // парный класс должен быть меньшего размера
                     swap(P[i],P[j]);
+                }
+                for (const string& r : P[i]) { // -------------------------------------- Исправление
+                    Class[r] = i;
                 }
                 for (auto r : P[j]){
                     Class[r] = j;
