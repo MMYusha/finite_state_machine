@@ -152,35 +152,36 @@ TEST(DFATests, DFAminTest1_RealDFA_3) {
     std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
 
     // Заполнение переходов согласно таблице
-    transitions["0"]["a"] = "1";
-    transitions["0"]["b"] = "0";
-    transitions["0"]["c"] = "0";
+    transitions["q0"]["a"] = "q2";
+    transitions["q0"]["b"] = "q1";
 
-    transitions["1"]["a"] = "1";
-    transitions["1"]["b"] = "2";
-    transitions["1"]["c"] = "0";
+    transitions["q1"]["a"] = "q3";
+    transitions["q1"]["b"] = "q0";
 
-    transitions["2"]["a"] = "1";
-    transitions["2"]["b"] = "0";
-    transitions["2"]["c"] = "3";
+    transitions["q2"]["a"] = "q4";
+    transitions["q2"]["b"] = "q3";
 
-    transitions["3"]["a"] = "3";
-    transitions["3"]["b"] = "3";
-    transitions["3"]["c"] = "3";
+    transitions["q3"]["a"] = "q4";
+    transitions["q3"]["b"] = "q3";
 
-    vector<string> alphabet = {"a", "b", "c"};
-    vector<string> Q = {"0", "1", "2", "3"};
-    vector<string> F = {"3"};   // только состояние 3 допускающее
+    transitions["q4"]["a"] = "q1";
+    transitions["q4"]["b"] = "q4";
+
+    transitions["q5"]["a"] = "q2";
+    transitions["q5"]["b"] = "q5";
+
+    vector<string> alphabet = {"a", "b"};
+    vector<string> Q = {"q0", "q1", "q2", "q3", "q4", "q5"}; // q5 недостижимое состояние 
+    vector<string> F = {"q0", "q1"};   // допускающее
 
     // ACT
     auto P = DFAmin(alphabet, Q, F, transitions);
 
     // ASSERT: все состояния различны → 4 класса по одному состоянию
     vector<vector<string>> Ptrue = {
-        {"0"},
-        {"1"},
-        {"2"},
-        {"3"}
+        {"q0", "q1"},
+        {"q2", "q3"},
+        {"q4"},
     };
 
     auto P_sorted = P;                 // копируем фактический результат
@@ -232,7 +233,7 @@ TEST(DFATests, DFAminTest1_UnreachableStates) {
     auto P = DFAmin(alphabet, Q, F, transitions);
 
     // ASSERT
-    vector<vector<string>> Ptrue =  { { "A" }, { "B" }, { "C" }, { "D" }, { "E" } };
+    vector<vector<string>> Ptrue =  { { "A" }, { "B" }, { "C" }, { "D" }, { "E" } }; // F и G недостижимы
 
     auto P_sorted = P;                 // копируем фактический результат
     auto expected_sorted = Ptrue;      // копируем ожидаемый
@@ -342,10 +343,6 @@ TEST(DFATests, DFAminTest3_AlreadyMinimal) {
     auto P = func_minimization::DFAmin(E, Q, F, transitions);
 
     // ASSERT: каждый класс содержит ровно одно состояние
-    std::vector<std::vector<std::string>> expected = {
-        {"S01"}, {"S0"}, {"S"}   // порядок зависит от алгоритма, здесь ожидаем такой же, как в исходном разбиении
-    };
-
     std::vector<std::vector<std::string>> expected_ordered = {{"S01"}, {"S"}, {"S0"}};
     ASSERT_EQ(expected_ordered, P);
 }
