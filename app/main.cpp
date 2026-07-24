@@ -91,7 +91,7 @@ int main() {
 
     // массив размеров ДКА
     int min_states = 1;
-    int max_states = 16384;
+    int max_states = 4096;
     int intermediate_number = 5;
     int n = min_states;
     // увеличение размеров ДКА в зависимости n**2
@@ -115,10 +115,7 @@ int main() {
         number_of_states.push_back(n);
 
     }
-    cout <<"\nМассив состояний\n";
-    for (int n : number_of_states){
-        cout << n << "\n";
-    }
+
     func_benchmark::run_benchmark(number_of_states, alphabet_size, mode, repetitions, seed);
 
     std::cout << "Нажмите Enter, чтобы закрыть окно...";
