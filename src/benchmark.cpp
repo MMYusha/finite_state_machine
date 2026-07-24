@@ -132,22 +132,14 @@ void plot_with_gnuplot(const string& data_file, const string& output_png = "dfa_
 // Основная функция бенчмарка
 // ------------------------------------------------------------
 void run_benchmark(
-    int min_states,
-    int max_states,
-    int step,
+    vector<int> number_of_states,
     int alphabet_size,
     string mode,
     int repetitions,
     int seed
 ) {
     vector<pair<int, double>> results;
-    int n = min_states;
-    while (n*min_states <= max_states) {
-        if (n == 1) {
-            n = 2;
-        }          // если начали с 1, следующая степень 2
-        else n *= min_states;
-    //for (int n = min_states; n <= max_states; n += step) {
+    for (int n : number_of_states) {
         double total_time = 0.0;
         for (int rep = 0; rep < repetitions; ++rep) {
             auto dfa = generate_dfa(n, alphabet_size, mode, seed + rep);
