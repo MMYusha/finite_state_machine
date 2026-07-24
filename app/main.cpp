@@ -80,15 +80,46 @@ int main() {
     res = CreateNewTransitions(res, P);
     writeDFA("output.csv", res);
 
-    int min_states=2;
-    int max_states=1000;
-    int step=10;
-    int alphabet_size=10;
+
+    // ================= Фактическая сложность =================
+    // параметры бенчмарка
+    vector<int> number_of_states;
+    int alphabet_size=2;
     string mode = "full";
-    int repetitions=100;
+    int repetitions=10;
     int seed=42;
 
-    func_benchmark::run_benchmark(min_states,max_states,step, alphabet_size, mode, repetitions, seed);
+    // массив размеров ДКА
+    int min_states = 1;
+    int max_states = 16384;
+    int intermediate_number = 5;
+    int n = min_states;
+    // увеличение размеров ДКА в зависимости n**2
+    while (n < max_states) {
+        if (n == 1) {
+            n = 2;
+        }          // если начали с 1, следующая степень 2
+        else n *= 2;
+        
+        // промежуточные значения
+        if (!number_of_states.empty()){;
+            int last = number_of_states.back();
+            int step = (n - last)/intermediate_number;
+            cout << step;
+            if (number_of_states.back() + step*(intermediate_number-1) < n && step > 0){
+                for (int count = 0; count < intermediate_number-1; ++count){
+                    number_of_states.push_back(number_of_states.back() + step);
+                }
+            }
+        }
+        number_of_states.push_back(n);
+
+    }
+    cout <<"\nМассив состояний\n";
+    for (int n : number_of_states){
+        cout << n << "\n";
+    }
+    func_benchmark::run_benchmark(number_of_states, alphabet_size, mode, repetitions, seed);
 
     std::cout << "Нажмите Enter, чтобы закрыть окно...";
     std::cin.get();  // ждёт нажатия Enter
