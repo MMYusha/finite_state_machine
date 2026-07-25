@@ -133,7 +133,7 @@ void plot_with_gnuplot(const string& data_file, const string& output_png = "dfa_
 // ------------------------------------------------------------
 void run_benchmark(
     vector<int> number_of_states,
-    int alphabet_size,
+    vector<int> vector_alphabet_size,
     string mode,
     int repetitions,
     int seed
@@ -141,21 +141,23 @@ void run_benchmark(
     vector<pair<int, double>> results;
     for (int n : number_of_states) {
         double total_time = 0.0;
-        for (int rep = 0; rep < repetitions; ++rep) {
-            auto dfa = generate_dfa(n, alphabet_size, mode, seed + rep);
-            const auto& Q = dfa.states;
-            const auto& alphabet = dfa.alphabet;
-            const auto& F = dfa.final_states;
-            const auto& transitions = dfa.transitions;
+        for (int alphabet_size : vector_alphabet_size){
+            for (int rep = 0; rep < repetitions; ++rep) {
+                auto dfa = generate_dfa(n, alphabet_size, mode, seed + rep);
+                const auto& Q = dfa.states;
+                const auto& alphabet = dfa.alphabet;
+                const auto& F = dfa.final_states;
+                const auto& transitions = dfa.transitions;
 
-            auto start = high_resolution_clock::now();
-            auto P = func_minimization::DFAmin(alphabet, Q, F, transitions);
-            auto end = high_resolution_clock::now();
+                auto start = high_resolution_clock::now();
+                auto P = func_minimization::DFAmin(alphabet, Q, F, transitions);
+                auto end = high_resolution_clock::now();
 
-            duration<double, milli> elapsed = end - start;
-            total_time += elapsed.count();
+                duration<double, milli> elapsed = end - start;
+                total_time += elapsed.count();
+            }
         }
-        double avg = total_time / repetitions;
+        double avg = total_time / repetitions / vector_alphabet_size.size();
         results.push_back({n, avg});
         cout << "States: " << n << ", avg time: " << avg << " ms\n";
     }

@@ -84,14 +84,14 @@ int main() {
     // ================= Фактическая сложность =================
     // параметры бенчмарка
     vector<int> number_of_states;
-    int alphabet_size=2;
+    vector<int> vector_alphabet_size={2,3,4,5,6,7,8,9,10};
     string mode = "full";
     int repetitions=10;
     int seed=42;
 
     // массив размеров ДКА
     int min_states = 1;
-    int max_states = 4096;
+    int max_states = 1024;
     int intermediate_number = 5;
     int n = min_states;
     // увеличение размеров ДКА в зависимости n**2
@@ -116,7 +116,7 @@ int main() {
 
     }
 
-    func_benchmark::run_benchmark(number_of_states, alphabet_size, mode, repetitions, seed);
+    func_benchmark::run_benchmark(number_of_states, vector_alphabet_size, mode, repetitions, seed);
 
     std::cout << "Нажмите Enter, чтобы закрыть окно...";
     std::cin.get();  // ждёт нажатия Enter

@@ -10,7 +10,7 @@
 namespace func_benchmark {
     void run_benchmark(
         std::vector<int> number_of_states,
-        int alphabet_size = 2,
+        std::vector<int> vector_alphabet_size,
         std::string = "full",
         int repetitions = 3,
         int seed = 42
