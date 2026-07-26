@@ -7,9 +7,9 @@
 #include <vector>
 #include <algorithm> // для функции сортировки
 
-#include <func_transition/transit.hpp>
-#include <func_minimization/DFAmin.hpp>
-#include <func_input/DFAinput.hpp>
+#include <func_DFA/transit.hpp>
+#include <func_DFA/DFAmin.hpp>
+#include <func_DFA/DFAinput.hpp>
 
 using namespace std;
 using namespace func_transition;

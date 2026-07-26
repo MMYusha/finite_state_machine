@@ -4,8 +4,8 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
-#include <func_transition/transit.hpp>
-#include <func_input/DFAinput.hpp>
+#include <func_DFA/transit.hpp>
+#include <func_DFA/DFAinput.hpp>
 
 using namespace func_transition;
 using namespace func_input;

@@ -1,5 +1,5 @@
-#include <func_benchmark/benchmark.hpp>
-#include <func_minimization/DFAmin.hpp>  
+#include <func_DFA/benchmark.hpp>
+#include <func_DFA/DFAmin.hpp>  
 
 #include <chrono>
 #include <iostream>

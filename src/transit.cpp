@@ -1,4 +1,4 @@
-#include <func_transition/transit.hpp> // публичные include подключаем как системные
+#include <func_DFA/transit.hpp> // публичные include подключаем как системные
 #include <iostream>   // для std::cout
 #include <vector>   // для std::cout
 

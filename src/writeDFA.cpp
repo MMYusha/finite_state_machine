@@ -1,4 +1,4 @@
-#include <func_input/DFAinput.hpp>
+#include <func_DFA/DFAinput.hpp>
 #include <fstream>
 #include <iostream>
 

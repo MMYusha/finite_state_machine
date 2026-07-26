@@ -1,4 +1,4 @@
-#include <func_minimization/DFAmin.hpp> // публичные include подключаем как системные
+#include <func_DFA/DFAmin.hpp> // публичные include подключаем как системные
 #include <iostream>   // для std::cout
 #include <vector> 
 #include <unordered_map>

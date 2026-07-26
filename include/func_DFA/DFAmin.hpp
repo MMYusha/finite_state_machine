@@ -1,7 +1,7 @@
 #ifndef func_minimization_DFAmin_HPP_
 #define func_minimization_DFAmin_HPP_
 
-#include <func_input/DFAinput.hpp>
+#include <func_DFA/DFAinput.hpp>
 #include <string>
 #include <unordered_map>
 #include <vector>

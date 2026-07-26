@@ -19,10 +19,7 @@ add_executable(my_DFA_test
 # по умолчанию он просто запускает все тесты
 target_link_libraries(my_DFA_test PRIVATE
     GTest::gtest_main
-    func_transition
-    func_minimization
-    func_input
-
+    func_DFA
 )
 
 # в данном случае не нужно, но в ваших серьезных проектах в тесты надо будет подключать публичные и приватные хэдеры

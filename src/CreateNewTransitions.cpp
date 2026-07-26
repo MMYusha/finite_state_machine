@@ -1,11 +1,11 @@
-#include <func_minimization/DFAmin.hpp> // публичные include подключаем как системные
+#include <func_DFA/DFAmin.hpp> // публичные include подключаем как системные
 #include <iostream>   // для std::cout
 #include <vector> 
 #include <string> 
 #include <unordered_map>
 #include <algorithm> 
 
-#include <func_input/DFAinput.hpp>
+#include <func_DFA/DFAinput.hpp>
 
 using namespace std;
 

@@ -1,4 +1,4 @@
-#include <func_input/DFAinput.hpp> // публичные include подключаем как системные
+#include <func_DFA/DFAinput.hpp> // публичные include подключаем как системные
 #include <iostream>   
 #include <sstream>
 #include <fstream>
