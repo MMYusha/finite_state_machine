@@ -12,10 +12,6 @@ using namespace func_DFA;
 
 int main() {
     system("chcp 65001 > nul"); 
-    // Типы для читаемости
-    using State = string;
-    using Symbol = string;
-
 
     // Чтение ДКА из csv файла
     string filename = "input.csv";
@@ -46,7 +42,7 @@ int main() {
 
 
     // Инициализация ДКА
-    State current = dfa.start_state;
+    string current = dfa.start_state;
     vector<string> F = dfa.permited_state;
     vector<string> input = dfa.string_transition; // пример входной строки из файла
     vector<string> E = dfa.alphabet;
@@ -55,7 +51,7 @@ int main() {
 
 
     // Обработка строки перехода
-    State final_state = transit(input, current, transitions);
+    string final_state = transit(input, current, transitions);
     cout << "Переход в состояние " << final_state << " из начального "<< dfa.start_state  << "\n\n";
 
     

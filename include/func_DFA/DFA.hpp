@@ -18,10 +18,8 @@ struct DFA {
     unordered_map<string, unordered_map<string, string>> transitions;
 };
 
-
-template <typename State, typename Symbol>
-State transit(const vector<Symbol>& input, State current,
-              const unordered_map<State, unordered_map<Symbol, State>>& transitions);
+string transit(const vector<string>& input, string current,
+              const unordered_map<string, unordered_map<string, string>>& transitions);
 
 vector<vector<string>> DFAmin(
     const vector<string>& alphabet,

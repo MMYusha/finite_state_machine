@@ -25,12 +25,11 @@ TEST(DFATests, DFAminTest1_RealDFA_1) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
     // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
-    using State = string;
-    using Symbol = string;
+    ;
 
     // Вложенная хеш-таблица переходов:
     // состояние -> (символ -> следующее состояние)
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
 
     // Заполнение переходов согласно таблице
     transitions["A"]["0"] = "B";
@@ -82,12 +81,12 @@ TEST(DFATests, DFAminTest1_RealDFA_2) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
     // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
-    using State = string;
-    using Symbol = string;
+    ;
+  
 
     // Вложенная хеш-таблица переходов:
     // состояние -> (символ -> следующее состояние)
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
 
     // Заполнение переходов согласно таблице
     transitions["0"]["a"] = "1";
@@ -140,12 +139,12 @@ TEST(DFATests, DFAminTest1_RealDFA_3) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
     // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
-    using State = string;
-    using Symbol = string;
+    ;
+  
 
     // Вложенная хеш-таблица переходов:
     // состояние -> (символ -> следующее состояние)
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
 
     // Заполнение переходов согласно таблице
     transitions["q0"]["a"] = "q2";
@@ -191,12 +190,12 @@ TEST(DFATests, DFAminTest1_UnreachableStates) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
     // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
-    using State = string;
-    using Symbol = string;
+    ;
+  
 
     // Вложенная хеш-таблица переходов:
     // состояние -> (символ -> следующее состояние)
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
 
     // Заполнение переходов согласно таблице
     transitions["A"]["0"] = "B";
@@ -243,12 +242,11 @@ TEST(DFATests, DFAminTest2_Idempotency) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
     // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
-    using State = string;
-    using Symbol = string;
+    ;
 
     // Вложенная хеш-таблица переходов:
     // состояние -> (символ -> следующее состояние)
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
 
     // Заполнение переходов согласно таблице
     transitions["A"]["0"] = "B";
@@ -303,7 +301,7 @@ TEST(DFATests, DFAminTest2_Idempotency) {
     vector<string> newF = newDFA.permited_state;
     vector<string> newE = newDFA.alphabet;
     vector<string> newQ = newDFA.states;
-    std::unordered_map<State, std::unordered_map<Symbol, State>> newTransitions = newDFA.transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> newTransitions = newDFA.transitions;
 
     // Повторное разбиение
     vector<vector<string>> newP = DFAmin(newE,newQ,newF,newTransitions); // 
@@ -320,10 +318,7 @@ TEST(DFATests, DFAminTest2_Idempotency) {
 
 TEST(DFATests, DFAminTest3_AlreadyMinimal) {
     // ARRANGE
-    using State = std::string;
-    using Symbol = std::string;
-
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
     transitions["S"]["0"]  = "S0";
     transitions["S"]["1"]  = "S";
     transitions["S0"]["0"] = "S0";
@@ -345,10 +340,7 @@ TEST(DFATests, DFAminTest3_AlreadyMinimal) {
 
 TEST(DFATests, DFAminTest4_TwoEquivalent) {
     // ARRANGE
-    using State = std::string;
-    using Symbol = std::string;
-
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
     transitions["A"]["0"] = "C";
     transitions["A"]["1"] = "B";
     transitions["B"]["0"] = "C";
@@ -375,12 +367,11 @@ TEST(ErorDFATests, ErrorDFAminTest1_WrongStates) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
     // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
-    using State = string;
-    using Symbol = string;
+    ;
 
     // Вложенная хеш-таблица переходов:
     // состояние -> (символ -> следующее состояние)
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
 
     // Заполнение переходов согласно таблице
     transitions["A"]["0"] = "B";
@@ -422,12 +413,12 @@ TEST(ErorDFATests, ErrorDFAminTest2_WrongPermitedStates) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
     // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
-    using State = string;
-    using Symbol = string;
+    ;
+
 
     // Вложенная хеш-таблица переходов:
     // состояние -> (символ -> следующее состояние)
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
 
     // Заполнение переходов согласно таблице
     transitions["A"]["0"] = "B";
@@ -470,12 +461,11 @@ TEST(ErorDFATests, ErrorDFAminTest3_WrongAlphabet) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
     // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
-    using State = string;
-    using Symbol = string;
+    ;
 
     // Вложенная хеш-таблица переходов:
     // состояние -> (символ -> следующее состояние)
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
 
     // Заполнение переходов согласно таблице
     transitions["A"]["0"] = "B";
@@ -518,12 +508,11 @@ TEST(DFAminTest_NotAllAlphabetUse, NotAllAlphabetUse) {
     // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
     
     // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
-    using State = string;
-    using Symbol = string;
+    ;
 
     // Вложенная хеш-таблица переходов:
     // состояние -> (символ -> следующее состояние)
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    std::unordered_map<string, std::unordered_map<string, string>> transitions;
 
     // Заполнение переходов согласно таблице
     transitions["A"]["0"] = "B";

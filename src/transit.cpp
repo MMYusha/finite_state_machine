@@ -4,12 +4,11 @@
 
 using namespace std;
 
-template <typename State, typename Symbol>
 
-State func_DFA::transit(const vector<Symbol>& input, State current,
-              const std::unordered_map<State, std::unordered_map<Symbol, State>>& transitions) {
+string func_DFA::transit(const vector<string>& input, string current,
+              const std::unordered_map<string, std::unordered_map<string, string>>& transitions) {
     // Обработка каждого символа
-    for (Symbol ch : input) {   
+    for (string ch : input) {   
         // Ищем таблицу переходов из текущего состояния
         auto state_it = transitions.find(current);
         if (state_it == transitions.end()) {
@@ -17,7 +16,7 @@ State func_DFA::transit(const vector<Symbol>& input, State current,
             break; // автомат застрял
         }
         // Ищем переход по текущему символу
-        // Внутренняя таблица – это unordered_map<Symbol, State>
+        // Внутренняя таблица – это unordered_map<string, string>
         auto sym_it = state_it->second.find(ch);
         if (sym_it == state_it->second.end()) {
             std::cout << "Нет перехода по символу '" << ch << "'\n";
@@ -32,7 +31,3 @@ State func_DFA::transit(const vector<Symbol>& input, State current,
     return current;
 }
 
-template string func_DFA::transit<string, string>(
-    const vector<string>&,
-    string,
-    const std::unordered_map<string, std::unordered_map<string, string>>&);
