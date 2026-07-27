@@ -10,7 +10,6 @@ using namespace std;
 using namespace func_DFA;
 
 
-
 int main() {
     system("chcp 65001 > nul"); 
     // Типы для читаемости
