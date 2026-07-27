@@ -1,4 +1,4 @@
-#include <func_DFA/DFAmin.hpp> // публичные include подключаем как системные
+#include <func_DFA/DFA.hpp> // публичные include подключаем как системные
 #include <iostream>   // для std::cout
 #include <vector> 
 #include <unordered_map>
@@ -10,7 +10,7 @@
 using namespace std;
 
 
-vector<vector<string>> func_minimization::DFAmin(
+vector<vector<string>> func_DFA::DFAmin(
     const vector<string>& alphabet,
     const vector<string>& Q, 
     const vector<string>& F,

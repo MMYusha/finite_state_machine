@@ -1,5 +1,5 @@
 #include <func_DFA/benchmark.hpp>
-#include <func_DFA/DFAmin.hpp>  
+#include <func_DFA/DFA.hpp>  
 
 #include <chrono>
 #include <iostream>
@@ -150,7 +150,7 @@ void run_benchmark(
                 const auto& transitions = dfa.transitions;
 
                 auto start = high_resolution_clock::now();
-                auto P = func_minimization::DFAmin(alphabet, Q, F, transitions);
+                auto P = func_DFA::DFAmin(alphabet, Q, F, transitions);
                 auto end = high_resolution_clock::now();
 
                 duration<double, milli> elapsed = end - start;

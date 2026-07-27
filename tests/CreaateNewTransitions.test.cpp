@@ -7,12 +7,11 @@
 #include <vector>
 
 #include <func_DFA/DFA.hpp>
-#include <func_DFA/DFAmin.hpp>
 #include <func_DFA/DFAinput.hpp>
 
 using namespace std;
 using namespace func_DFA;
-using namespace func_minimization;
+
 using namespace func_input;
 
 
@@ -50,7 +49,7 @@ TEST(DFATests, CreateNewTransitionsTest1) {
     };
 
     // ACT
-    func_input::Result NewRes = func_minimization::CreateNewTransitions(OldRes, P);
+    func_input::Result NewRes = CreateNewTransitions(OldRes, P);
 
     // ASSERT
 

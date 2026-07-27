@@ -8,12 +8,10 @@
 #include <algorithm> // для функции сортировки
 
 #include <func_DFA/DFA.hpp>
-#include <func_DFA/DFAmin.hpp>
 #include <func_DFA/DFAinput.hpp>
 
 using namespace std;
 using namespace func_DFA;
-using namespace func_minimization;
 using namespace func_input;
 
 
@@ -340,7 +338,7 @@ TEST(DFATests, DFAminTest3_AlreadyMinimal) {
     std::vector<std::string> F = {"S01"};
 
     // ACT
-    auto P = func_minimization::DFAmin(E, Q, F, transitions);
+    auto P = DFAmin(E, Q, F, transitions);
 
     // ASSERT: каждый класс содержит ровно одно состояние
     std::vector<std::vector<std::string>> expected_ordered = {{"S01"}, {"S"}, {"S0"}};
@@ -365,7 +363,7 @@ TEST(DFATests, DFAminTest4_TwoEquivalent) {
     std::vector<std::string> F = {"C"};   // только C допускающее
 
     // ACT
-    auto P = func_minimization::DFAmin(E, Q, F, transitions);
+    auto P = DFAmin(E, Q, F, transitions);
 
     // ASSERT: A и B эквивалентны, C отдельно
     // Начальное разбиение: { {C}, {A, B} }

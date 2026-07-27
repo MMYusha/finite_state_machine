@@ -1,4 +1,4 @@
-#include <func_DFA/DFAmin.hpp> // публичные include подключаем как системные
+#include <func_DFA/DFA.hpp> // публичные include подключаем как системные
 #include <iostream>   // для std::cout
 #include <vector> 
 #include <string> 
@@ -10,7 +10,7 @@
 using namespace std;
 
 
-func_input::Result func_minimization::CreateNewTransitions(
+func_input::Result func_DFA::CreateNewTransitions(
     func_input::Result OldRes,
     vector<vector<string>> P) {
 
