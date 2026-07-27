@@ -20,8 +20,8 @@ struct DFA {
 
 
 template <typename State, typename Symbol>
-State transit(const std::vector<Symbol>& input, State current,
-              const std::unordered_map<State, std::unordered_map<Symbol, State>>& transitions);
+State transit(const vector<Symbol>& input, State current,
+              const unordered_map<State, unordered_map<Symbol, State>>& transitions);
 
 vector<vector<string>> DFAmin(
     const vector<string>& alphabet,
@@ -34,9 +34,15 @@ DFA CreateNewTransitions(
     vector<vector<string>> P);
 
 DFA DFAinput(string filename);
-void writeDFA(const std::string& filename, const DFA& dfa);
+void writeDFA(const string& filename, const DFA& dfa);
 
-
+void run_benchmark(
+        vector<int> number_of_states,
+        vector<int> vector_alphabet_size,
+        string = "full",
+        int repetitions = 3,
+        int seed = 42
+    );
 
 
 } // namespace func_transition

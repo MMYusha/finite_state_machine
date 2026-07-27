@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <func_DFA/DFA.hpp>
-#include <func_DFA/benchmark.hpp>
 
 using namespace std;
 using namespace func_DFA;
@@ -101,7 +100,6 @@ int main() {
         if (!number_of_states.empty()){;
             int last = number_of_states.back();
             int step = (n - last)/intermediate_number;
-            cout << step;
             if (number_of_states.back() + step*(intermediate_number-1) < n && step > 0){
                 for (int count = 0; count < intermediate_number-1; ++count){
                     number_of_states.push_back(number_of_states.back() + step);
@@ -112,9 +110,9 @@ int main() {
 
     }
 
-    func_benchmark::run_benchmark(number_of_states, vector_alphabet_size, mode, repetitions, seed);
+    run_benchmark(number_of_states, vector_alphabet_size, mode, repetitions, seed);
 
-    std::cout << "Нажмите Enter, чтобы закрыть окно...";
-    std::cin.get();  // ждёт нажатия Enter
+    cout << "Нажмите Enter, чтобы закрыть окно...";
+    cin.get();  // ждёт нажатия Enter
     return 0;
 }

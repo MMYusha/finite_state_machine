@@ -1,4 +1,3 @@
-#include <func_DFA/benchmark.hpp>
 #include <func_DFA/DFA.hpp>  
 
 #include <chrono>
@@ -25,7 +24,7 @@ struct GeneratedDFA {
     vector<string> final_states;
 };
 
-namespace func_benchmark{
+namespace func_DFA{
 GeneratedDFA generate_dfa(int n, int alphabet_size, const string& mode, int seed) {
     // Проверки
     if (n < 2) throw invalid_argument("n должно быть не меньше 2");
