@@ -4,10 +4,10 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
-#include <func_DFA/transit.hpp>
+#include <func_DFA/DFA.hpp>
 #include <func_DFA/DFAinput.hpp>
 
-using namespace func_transition;
+using namespace func_DFA;
 using namespace func_input;
 using namespace std;
 
@@ -61,19 +61,19 @@ TEST(DFATests, TransitTest1) {
 
     // ACT - это само действие; именно то, что нам нужно проверить
     vector<string> input1 = {"0","1","0","1"}; // пример входной строки
-    State final_state1 = func_transition::transit(input1, current, transitions);
+    State final_state1 = transit(input1, current, transitions);
 
     vector<string> input2 = {"0","0","0","1","0","0","1","0","1","1","1","0","1","1"}; // "00010010111011" пример входной строки A 0B 0G 0G 1E 0H 0G 1E 0H 1C 1C 1C 0A 1F 1G
-    State final_state2 = func_transition::transit(input2, current, transitions);
+    State final_state2 = transit(input2, current, transitions);
 
     vector<string> input3 = {"0"}; // "0"
-    State final_state3 = func_transition::transit(input3, current, transitions);
+    State final_state3 = transit(input3, current, transitions);
 
     vector<string> input4 = {"0","1","E","0","1"}; // "01E01"
-    State final_state4 = func_transition::transit(input4, current, transitions);
+    State final_state4 = transit(input4, current, transitions);
 
     vector<string> input5 = {}; // пустая строка
-    State final_state5 = func_transition::transit(input5, current, transitions);
+    State final_state5 = transit(input5, current, transitions);
 
     // ASSERT - проверка результатов; именно ASSERT определяет, пройден тест или нет
     ASSERT_EQ("F", final_state1);
@@ -101,10 +101,10 @@ TEST(DFATests, TransitTest2) {
     std::vector<std::string> F = {"Even"};  // допускающее – чётное число единиц
 
     // ACT: подаём строки с разным числом единиц
-    State res1 = func_transition::transit({"0", "1", "0", "1"}, start, transitions); // две единицы -> Even
-    State res2 = func_transition::transit({"1", "0", "1"}, start, transitions);      // две единицы -> Even
-    State res3 = func_transition::transit({"1", "1", "1"}, start, transitions);      // три единицы -> Odd
-    State res4 = func_transition::transit({}, start, transitions);                   // пустая строка -> Even
+    State res1 = transit({"0", "1", "0", "1"}, start, transitions); // две единицы -> Even
+    State res2 = transit({"1", "0", "1"}, start, transitions);      // две единицы -> Even
+    State res3 = transit({"1", "1", "1"}, start, transitions);      // три единицы -> Odd
+    State res4 = transit({}, start, transitions);                   // пустая строка -> Even
 
     // ASSERT
     ASSERT_EQ("Even", res1);
@@ -135,11 +135,11 @@ TEST(DFATests, TransitTest3) {
     std::vector<std::string> F = {"S01"};
 
     // ACT
-    State res1 = func_transition::transit({"0", "1"}, start, transitions);           // "01" -> S01
-    State res2 = func_transition::transit({"1", "0", "1"}, start, transitions);      // "101" -> S01
-    State res3 = func_transition::transit({"0", "0", "1", "0"}, start, transitions); // "0010" -> S0 (не допускается)
-    State res4 = func_transition::transit({"1", "1"}, start, transitions);           // "11" -> S (не допускается)
-    State res5 = func_transition::transit({}, start, transitions);                   // пустая -> S (не допускается)
+    State res1 = transit({"0", "1"}, start, transitions);           // "01" -> S01
+    State res2 = transit({"1", "0", "1"}, start, transitions);      // "101" -> S01
+    State res3 = transit({"0", "0", "1", "0"}, start, transitions); // "0010" -> S0 (не допускается)
+    State res4 = transit({"1", "1"}, start, transitions);           // "11" -> S (не допускается)
+    State res5 = transit({}, start, transitions);                   // пустая -> S (не допускается)
 
     // ASSERT
     ASSERT_EQ("S01", res1);

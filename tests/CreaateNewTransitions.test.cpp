@@ -6,12 +6,12 @@
 #include <string>
 #include <vector>
 
-#include <func_DFA/transit.hpp>
+#include <func_DFA/DFA.hpp>
 #include <func_DFA/DFAmin.hpp>
 #include <func_DFA/DFAinput.hpp>
 
 using namespace std;
-using namespace func_transition;
+using namespace func_DFA;
 using namespace func_minimization;
 using namespace func_input;
 
@@ -88,21 +88,21 @@ TEST(DFATests, CreateNewTransitionsTest1) {
     
     // Строка "0101" - из A+E: 0->B+H, 1->C, 0->A+E, 1->D+F
     std::vector<std::string> input1 = {"0","1","0","1"};
-    std::string final1 = func_transition::transit(input1, NewRes.start_state, NewRes.transitions);
+    std::string final1 = transit(input1, NewRes.start_state, NewRes.transitions);
     ASSERT_EQ("D+F", final1);
 
     // Строка "000" - A+E -0-> B+H -0-> G -0-> G
     std::vector<std::string> input2 = {"0","0","0"};
-    std::string final2 = func_transition::transit(input2, NewRes.start_state, NewRes.transitions);
+    std::string final2 = transit(input2, NewRes.start_state, NewRes.transitions);
     ASSERT_EQ("G", final2);
 
     // Строка "111" - A+E -1-> D+F -1-> G -1-> A+E
     std::vector<std::string> input3 = {"1","1","1"};
-    std::string final3 = func_transition::transit(input3, NewRes.start_state, NewRes.transitions);
+    std::string final3 = transit(input3, NewRes.start_state, NewRes.transitions);
     ASSERT_EQ("A+E", final3);
 
     // Пустая строка - должно вернуть начальное состояние
     std::vector<std::string> empty;
-    std::string final_empty = func_transition::transit(empty, NewRes.start_state, NewRes.transitions);
+    std::string final_empty = transit(empty, NewRes.start_state, NewRes.transitions);
     ASSERT_EQ("A+E", final_empty);
 }

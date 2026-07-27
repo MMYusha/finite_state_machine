@@ -4,13 +4,13 @@
 #include <string>
 #include <vector>
 
-#include <func_DFA/transit.hpp>
+#include <func_DFA/DFA.hpp>
 #include <func_DFA/DFAmin.hpp>
 #include <func_DFA/DFAinput.hpp>
 #include <func_DFA/benchmark.hpp>
 
 using namespace std;
-using namespace func_transition;
+using namespace func_DFA;
 using namespace func_minimization;
 using namespace func_input;
 

@@ -1,12 +1,12 @@
-#include <func_DFA/transit.hpp> // публичные include подключаем как системные
-#include <iostream>   // для std::cout
-#include <vector>   // для std::cout
+#include <func_DFA/DFA.hpp> // публичные include подключаем как системные
+#include <iostream>   
+#include <vector>   
 
 using namespace std;
 
 template <typename State, typename Symbol>
 
-State func_transition::transit(const vector<Symbol>& input, State current,
+State func_DFA::transit(const vector<Symbol>& input, State current,
               const std::unordered_map<State, std::unordered_map<Symbol, State>>& transitions) {
     // Обработка каждого символа
     for (Symbol ch : input) {   
@@ -32,7 +32,7 @@ State func_transition::transit(const vector<Symbol>& input, State current,
     return current;
 }
 
-template string func_transition::transit<string, string>(
+template string func_DFA::transit<string, string>(
     const vector<string>&,
     string,
     const std::unordered_map<string, std::unordered_map<string, string>>&);
