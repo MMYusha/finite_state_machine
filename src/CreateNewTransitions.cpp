@@ -5,13 +5,13 @@
 #include <unordered_map>
 #include <algorithm> 
 
-#include <func_DFA/DFAinput.hpp>
+#include <func_DFA/DFA.hpp>
 
 using namespace std;
 
 
-func_input::Result func_DFA::CreateNewTransitions(
-    func_input::Result OldRes,
+func_DFA::DFA func_DFA::CreateNewTransitions(
+    func_DFA::DFA OldDfa,
     vector<vector<string>> P) {
 
     // отображение "старое состояние → имя класса" 
@@ -38,9 +38,9 @@ func_input::Result func_DFA::CreateNewTransitions(
         string className = stateToNewState[cls[0]]; // имя текущего класса
 
         unordered_map<string, string> trans; // переходы для этого класса
-        for (string sym : OldRes.alphabet) {
+        for (string sym : OldDfa.alphabet) {
             // Берем переход из любого состояния класса (возьмём первое)
-            string oldTarget = OldRes.transitions[cls[0]][sym];
+            string oldTarget = OldDfa.transitions[cls[0]][sym];
             // Находим класс, в который попадаем
             string newTarget = stateToNewState[oldTarget];
             trans[sym] = newTarget;
@@ -49,18 +49,18 @@ func_input::Result func_DFA::CreateNewTransitions(
     }
 
     // Обновление таблицы переходов
-    func_input::Result NewRes = OldRes;
-    NewRes.states = newStates;
-    NewRes.transitions = newTransitions;
+    func_DFA::DFA NewDfa = OldDfa;
+    NewDfa.states = newStates;
+    NewDfa.transitions = newTransitions;
 
     
     // Обновление начального состояния
-    NewRes.start_state = stateToNewState[OldRes.start_state]; // имя текущего класса
+    NewDfa.start_state = stateToNewState[OldDfa.start_state]; // имя текущего класса
 
 
     // Обновление допустимых состояний
     vector<string> newPermited;
-    for (string st : OldRes.permited_state) {
+    for (string st : OldDfa.permited_state) {
         auto it = stateToNewState.find(st);
         if (it != stateToNewState.end()) {
             // добавляем только уникальные классы
@@ -68,8 +68,8 @@ func_input::Result func_DFA::CreateNewTransitions(
                 newPermited.push_back(it->second);
         }
     }
-    NewRes.permited_state = newPermited;
+    NewDfa.permited_state = newPermited;
 
 
-    return NewRes;
+    return NewDfa;
 }

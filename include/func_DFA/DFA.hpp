@@ -5,10 +5,19 @@
 #include <vector>
 #include <unordered_map>
 
-#include <func_DFA/DFAinput.hpp>
-
+using namespace std;
 
 namespace func_DFA {
+
+struct DFA {
+    vector<string> string_transition;
+    vector<string> permited_state;
+    string start_state;
+    vector<string> alphabet;
+    vector<string> states;
+    unordered_map<string, unordered_map<string, string>> transitions;
+};
+
 
 template <typename State, typename Symbol>
 State transit(const std::vector<Symbol>& input, State current,
@@ -20,12 +29,12 @@ vector<vector<string>> DFAmin(
     const vector<string>& F,
     const unordered_map<string, unordered_map<string, string>>& transitions);
 
-func_input::Result CreateNewTransitions(
-    func_input::Result OldRes,
+DFA CreateNewTransitions(
+    DFA OldDfa,
     vector<vector<string>> P);
 
-
-
+DFA DFAinput(string filename);
+void writeDFA(const std::string& filename, const DFA& dfa);
 
 
 

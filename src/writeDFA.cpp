@@ -1,10 +1,10 @@
-#include <func_DFA/DFAinput.hpp>
+#include <func_DFA/DFA.hpp>
 #include <fstream>
 #include <iostream>
 
-namespace func_input {
+namespace func_DFA {
 
-void writeDFA(const std::string& filename, const Result& res) {
+void writeDFA(const std::string& filename, const DFA& dfa) {
     std::ofstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Не удалось открыть файл для записи: " << filename << "\n";
@@ -14,42 +14,42 @@ void writeDFA(const std::string& filename, const Result& res) {
     file.write(reinterpret_cast<const char*>(bom), sizeof(bom));
     // 1) Строка "переход;0;1;0;1"
     file << "переход;";
-    for (size_t i = 0; i < res.string_transition.size(); ++i) {
+    for (size_t i = 0; i < dfa.string_transition.size(); ++i) {
         if (i > 0) file << ";";
-        file << res.string_transition[i];
+        file << dfa.string_transition[i];
     }
     file << "\n";
 
     // 2) Строка "допустимые состояния;C;;;"
     file << "допустимые состояния;";
-    for (size_t i = 0; i < res.permited_state.size(); ++i) {
+    for (size_t i = 0; i < dfa.permited_state.size(); ++i) {
         if (i > 0) file << ";";
-        file << res.permited_state[i];
+        file << dfa.permited_state[i];
     }
     file << "\n";
 
     // 3) Строка "Начальное состояние;A;;;"
-    file << "Начальное состояние;" << res.start_state << ";;;\n";
+    file << "Начальное состояние;" << dfa.start_state << ";;;\n";
 
     // 4) Строка "состояния/алфавит;0;1;;"
     file << "состояния/алфавит;";
-    for (size_t i = 0; i < res.alphabet.size(); ++i) {
+    for (size_t i = 0; i < dfa.alphabet.size(); ++i) {
         if (i > 0) file << ";";
-        file << res.alphabet[i];
+        file << dfa.alphabet[i];
     }
     file << "\n";
 
     // 5) Строки состояний и переходов
-    for (const auto& state : res.states) {
+    for (const auto& state : dfa.states) {
         file << state << ";";
 
         // Переходы по каждому символу алфавита
-        auto itState = res.transitions.find(state);
-        if (itState != res.transitions.end()) {
+        auto itState = dfa.transitions.find(state);
+        if (itState != dfa.transitions.end()) {
             const auto& transMap = itState->second;
-            for (size_t i = 0; i < res.alphabet.size(); ++i) {
+            for (size_t i = 0; i < dfa.alphabet.size(); ++i) {
                 if (i > 0) file << ";";
-                auto itSym = transMap.find(res.alphabet[i]);
+                auto itSym = transMap.find(dfa.alphabet[i]);
                 if (itSym != transMap.end()) {
                     file << itSym->second;
                 }
@@ -57,7 +57,7 @@ void writeDFA(const std::string& filename, const Result& res) {
             }
         } else {
             // если состояние вообще отсутствует в таблице переходов – пишем пустые поля
-            for (size_t i = 0; i < res.alphabet.size(); ++i) {
+            for (size_t i = 0; i < dfa.alphabet.size(); ++i) {
                 if (i > 0) file << ";";
                 // пусто
             }

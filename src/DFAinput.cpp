@@ -1,4 +1,4 @@
-#include <func_DFA/DFAinput.hpp> // публичные include подключаем как системные
+#include <func_DFA/DFA.hpp> // публичные include подключаем как системные
 #include <iostream>   
 #include <sstream>
 #include <fstream>
@@ -9,15 +9,15 @@
 using namespace std;
 
 
-func_input::Result func_input::DFAinput(string filename) {
-    Result res;
+func_DFA::DFA func_DFA::DFAinput(string filename) {
+    DFA dfa;
     string token;
     string Line;
 
     ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Не удалось открыть файл!\n";
-        return res;
+        return dfa;
     }
 
 
@@ -26,7 +26,7 @@ func_input::Result func_input::DFAinput(string filename) {
     bool first = true;
     while (getline(ss1, token,';')){
         if (token == "") break;
-        if (!first) res.string_transition.push_back(token);
+        if (!first) dfa.string_transition.push_back(token);
         first = false;
     }
 
@@ -35,7 +35,7 @@ func_input::Result func_input::DFAinput(string filename) {
     first = true;
     while (getline(ss2, token,';')){
         if (token == "") break;
-        if (!first) res.permited_state.push_back(token);
+        if (!first) dfa.permited_state.push_back(token);
         first = false;
     }
 
@@ -44,7 +44,7 @@ func_input::Result func_input::DFAinput(string filename) {
     first = true;
     while (getline(ss3, token,';')){
         if (!first){
-            res.start_state = token;
+            dfa.start_state = token;
             break;
         }
         first = false;
@@ -55,7 +55,7 @@ func_input::Result func_input::DFAinput(string filename) {
     first = true;
     while (getline(ss4, token,';')){
         if (token == "") break;
-        if (!first) res.alphabet.push_back(token);
+        if (!first) dfa.alphabet.push_back(token);
         first = false;
     }
 
@@ -68,13 +68,13 @@ func_input::Result func_input::DFAinput(string filename) {
         while (getline(ss, token,';')){
             if (first) {
                 current_state = token;
-                res.states.push_back(token);
+                dfa.states.push_back(token);
                 first = false;
             }
             else{
-                if (count_alphabet < res.alphabet.size()){
+                if (count_alphabet < dfa.alphabet.size()){
                     if (!token.empty()){
-                        res.transitions[current_state][res.alphabet[count_alphabet]] = token;  
+                        dfa.transitions[current_state][dfa.alphabet[count_alphabet]] = token;  
                     }
                     ++count_alphabet;
                 }
@@ -87,5 +87,5 @@ func_input::Result func_input::DFAinput(string filename) {
 
 
 
-    return res;
+    return dfa;
     }

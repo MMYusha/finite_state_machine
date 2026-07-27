@@ -7,17 +7,14 @@
 #include <vector>
 
 #include <func_DFA/DFA.hpp>
-#include <func_DFA/DFAinput.hpp>
 
 using namespace std;
 using namespace func_DFA;
 
-using namespace func_input;
-
 
 TEST(DFATests, CreateNewTransitionsTest1) {
     // ARRANGE
-    func_input::Result OldRes;
+    DFA OldRes;
     OldRes.alphabet = {"0", "1"};
     OldRes.states = {"A", "B", "C", "D", "E", "F", "G", "H"};
     OldRes.permited_state = {"C"};
@@ -49,7 +46,7 @@ TEST(DFATests, CreateNewTransitionsTest1) {
     };
 
     // ACT
-    func_input::Result NewRes = CreateNewTransitions(OldRes, P);
+    DFA NewRes = CreateNewTransitions(OldRes, P);
 
     // ASSERT
 

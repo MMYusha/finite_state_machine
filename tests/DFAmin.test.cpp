@@ -8,11 +8,9 @@
 #include <algorithm> // для функции сортировки
 
 #include <func_DFA/DFA.hpp>
-#include <func_DFA/DFAinput.hpp>
 
 using namespace std;
 using namespace func_DFA;
-using namespace func_input;
 
 
 void sortClasses(std::vector<std::vector<std::string>>& v) { 
@@ -287,19 +285,19 @@ TEST(DFATests, DFAminTest2_Idempotency) {
     // ACT - это само действие; именно то, что нам нужно проверить
     
     // Инициализация ДКА
-    Result DFA;
+    DFA dfa;
     //DFA.start_state = ;
-    DFA.permited_state = F;
+    dfa.permited_state = F;
     //DFA.string_transition = ; // пример входной строки из файла
-    DFA.alphabet = E;
-    DFA.states = Q;
-    DFA.transitions = transitions;
+    dfa.alphabet = E;
+    dfa.states = Q;
+    dfa.transitions = transitions;
 
     // Минимизация (Разбиение на классы)
     vector<vector<string>> P = DFAmin(E,Q,F,transitions);
 
     // Получение описания нового автомата 
-    Result newDFA = CreateNewTransitions(DFA, P);
+    DFA newDFA = CreateNewTransitions(dfa, P);
 
     // Инициализация нового ДКА
     vector<string> newF = newDFA.permited_state;

@@ -5,10 +5,8 @@
 #include <string>
 #include <vector>
 #include <func_DFA/DFA.hpp>
-#include <func_DFA/DFAinput.hpp>
 
 using namespace func_DFA;
-using namespace func_input;
 using namespace std;
 
 

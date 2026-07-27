@@ -5,12 +5,10 @@
 #include <vector>
 
 #include <func_DFA/DFA.hpp>
-#include <func_DFA/DFAinput.hpp>
 #include <func_DFA/benchmark.hpp>
 
 using namespace std;
 using namespace func_DFA;
-using namespace func_input;
 
 
 
@@ -23,44 +21,44 @@ int main() {
 
     // Чтение ДКА из csv файла
     string filename = "input.csv";
-    Result res;
-    res = DFAinput(filename);
+    DFA dfa;
+    dfa = DFAinput(filename);
 
 
     // Информация о ДКА из файла
     cout << "\nСтрока перехода - ";
-    for (auto cls : res.string_transition) {   
+    for (auto cls : dfa.string_transition) {   
         printf("%s ", cls.c_str());
     }
     printf("\n");
 
     cout << "Допустимые состояния - ";
-    for (auto cls : res.permited_state) {   
+    for (auto cls : dfa.permited_state) {   
         printf("%s ", cls.c_str());
     }
     printf("\n");
 
-    cout << "Начальное состояние - " << res.start_state << "\n";
+    cout << "Начальное состояние - " << dfa.start_state << "\n";
 
     cout << "Алфавит - ";
-    for (auto cls : res.alphabet) {   
+    for (auto cls : dfa.alphabet) {   
         printf("%s ", cls.c_str());
     }
     printf("\n\n");
 
 
     // Инициализация ДКА
-    State current = res.start_state;
-    vector<string> F = res.permited_state;
-    vector<string> input = res.string_transition; // пример входной строки из файла
-    vector<string> E = res.alphabet;
-    vector<string> Q = res.states;
-    unordered_map<string, unordered_map<string, string>> transitions = res.transitions;
+    State current = dfa.start_state;
+    vector<string> F = dfa.permited_state;
+    vector<string> input = dfa.string_transition; // пример входной строки из файла
+    vector<string> E = dfa.alphabet;
+    vector<string> Q = dfa.states;
+    unordered_map<string, unordered_map<string, string>> transitions = dfa.transitions;
 
 
     // Обработка строки перехода
     State final_state = transit(input, current, transitions);
-    cout << "Переход в состояние " << final_state << " из начального "<< res.start_state  << "\n\n";
+    cout << "Переход в состояние " << final_state << " из начального "<< dfa.start_state  << "\n\n";
 
     
     // Минимизация ДКА
@@ -75,8 +73,8 @@ int main() {
     }
     printf("\n");
 
-    res = CreateNewTransitions(res, P);
-    writeDFA("output.csv", res);
+    dfa = CreateNewTransitions(dfa, P);
+    writeDFA("output.csv", dfa);
 
 
     // ================= Фактическая сложность =================

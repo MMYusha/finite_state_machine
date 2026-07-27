@@ -1,16 +1,16 @@
 #include <gtest/gtest.h>
-#include <func_DFA/DFAinput.hpp>
+#include <func_DFA/DFA.hpp>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <unordered_map>
 
 using namespace std;
-using namespace func_input;
+using namespace func_DFA;
 
 TEST(DFATests, WriteDFATest1) {
-    // ARRANGE: создаём эталонный объект Result с известными данными
-    Result original;
+    // ARRANGE: создаём эталонный объект DFA с известными данными
+    DFA original;
     original.string_transition = {"0", "1", "0", "1"};
     original.permited_state = {"C"};
     original.start_state = "A";
@@ -41,7 +41,7 @@ TEST(DFATests, WriteDFATest1) {
     writeDFA(filename, original);
 
     // Читаем файл обратно
-    Result readBack = DFAinput(filename);
+    DFA readBack = DFAinput(filename);
 
     // ASSERT: сравниваем все поля
     // 1) string_transition
