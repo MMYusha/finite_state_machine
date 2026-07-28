@@ -17,6 +17,8 @@ class DFA5 {
         vector<string> permitted_states;
         vector<string> alphabet;
         unordered_map<string, unordered_map<string, string>> transitions;
+
+        // Дополнительное поле
         vector<string> string_transition;
 
 
@@ -26,13 +28,18 @@ class DFA5 {
             const vector<string>& perm,
             const vector<string>& alph,
             const unordered_map<string, unordered_map<string, string>>& trans,
+
             const vector<string>& str_transition
         );
+
+        vector<vector<string>> computePartition() const;
+        DFA5 CreateNewTransitions(const vector<vector<string>>& Partition) const;
 
     public:
         static DFA5 fromCSV(const string& filename);
         void print();
         void exportCSV(const string& filename);
+        void minimize();
 
 };
 

@@ -13,12 +13,13 @@ using namespace func_DFA;
 int main() {
     system("chcp 65001 > nul"); 
 
-    // Чтение ДКА из csv файла
-    DFA5 dfa = DFA5::fromCSV("input.csv");
-    // Вывод ДКА в консоль
-    dfa.print();
-    // Запись ДКА в файл
-    dfa.exportCSV("output.csv");
+    
+    DFA5 dfa = DFA5::fromCSV("input.csv"); // Чтение ДКА из csv файла
+    dfa.print(); // Вывод ДКА в консоль
+    dfa.minimize(); // Минимизация ДКА
+    dfa.print(); // Вывод нового ДКА в консоль
+    dfa.exportCSV("output.csv"); // Запись нового ДКА в файл
+
 
     cout << "\nНажмите Enter, чтобы закрыть окно...";
     cin.get();  // ждёт нажатия Enter
