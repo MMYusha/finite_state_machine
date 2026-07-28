@@ -9,6 +9,35 @@ using namespace std;
 
 namespace func_DFA {
 
+class DFA5 {
+    private:
+        // Поля пятикортежа 
+        string start_state;   
+        vector<string> states; 
+        vector<string> permitted_states;
+        vector<string> alphabet;
+        unordered_map<string, unordered_map<string, string>> transitions;
+        vector<string> string_transition;
+
+
+        DFA5(
+            const string& start,
+            const vector<string>& st,
+            const vector<string>& perm,
+            const vector<string>& alph,
+            const unordered_map<string, unordered_map<string, string>>& trans,
+            const vector<string>& str_transition
+        );
+
+    public:
+        static DFA5 fromCSV(const string& filename);
+        void print();
+        void exportCSV(const string& filename);
+
+};
+
+
+
 struct DFA {
     vector<string> string_transition;
     vector<string> permited_state;
