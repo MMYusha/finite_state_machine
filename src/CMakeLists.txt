@@ -7,8 +7,9 @@ add_library(func_DFA STATIC
     transit.cpp    
     DFAmin.cpp
     benchmark.cpp
-    DFABuilder.cpp
+    benchmarkBuilder.cpp
     DFA.cpp
+    DFABuilder.cpp
 )
 
 # делаем доступными публичные заголовочные файлы

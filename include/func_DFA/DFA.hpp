@@ -49,6 +49,7 @@ class DFA5 {
         void transit_fromCSV();
 
         friend class DFABuilder;
+        friend class benchmark;
 };
 
 class DFABuilder {
@@ -71,14 +72,54 @@ class DFABuilder {
 };
 
 
-void run_benchmark(
-        vector<int> number_of_states,
-        vector<int> vector_alphabet_size,
-        string = "full",
-        int repetitions = 3,
-        int seed = 42
-    );
+class benchmark{
+    private:
+        vector<int> vector_alphabet_size;
+        vector<int> vector_number_of_states;
+        string mode;
+        int repetitions;
+        int seed;
 
+        // создание массив размеров ДКА (number_of_states)
+        int min_states;
+        int max_states;
+        int intermediate_number;
+
+        // Приватный конструктор
+        benchmark(
+            vector<int> vector_alph_size,
+            vector<int> vector_number_of_st,
+            string mod,
+            int repetit,
+            int sed
+        );
+
+        void save_benchmark_data(const vector<pair<int, double>>& data, const string& filename);
+        void plot_with_gnuplot(const string& data_file, const string& output_png = "dfa_min_time.png"); 
+
+
+    public:
+
+        void run_benchmark();
+        void print();
+
+        friend class benchmarkBuilder;
+};
+
+
+class benchmarkBuilder {
+    private:
+        vector<int> vector_alphabet_size;
+        vector<int> vector_number_of_states;
+        string mode;
+        int repetitions;
+        int seed;
+
+    public:
+        benchmarkBuilder& withInput(int min_states, int max_states, int intermediate_number,
+            int seed, int repetitions, string mode,  vector<int> vector_number_of_states, vector<int> vector_alphabet_size);
+        benchmark build() const;
+};
 
 } // namespace func_transition
 

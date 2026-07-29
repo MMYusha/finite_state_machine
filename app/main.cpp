@@ -26,7 +26,7 @@ int main() {
 
     // ================= Бенчмарк =================
     // параметры бенчмарка
-    vector<int> number_of_states;
+    vector<int> vector_number_of_states;
     vector<int> vector_alphabet_size={2};
     string mode = "full";
     int repetitions=20;
@@ -36,29 +36,12 @@ int main() {
     int min_states = 1;
     int max_states = 1024;
     int intermediate_number = 5;
-    int n = min_states;
-    // увеличение размеров ДКА в зависимости n**2
-    while (n < max_states) {
-        if (n == 1) {
-            n = 2;
-        }          // если начали с 1, следующая степень 2
-        else n *= 2;
-        
-        // промежуточные значения
-        if (!number_of_states.empty()){;
-            int last = number_of_states.back();
-            int step = (n - last)/intermediate_number;
-            if (number_of_states.back() + step*(intermediate_number-1) < n && step > 0){
-                for (int count = 0; count < intermediate_number-1; ++count){
-                    number_of_states.push_back(number_of_states.back() + step);
-                }
-            }
-        }
-        number_of_states.push_back(n);
 
-    }
-
-    run_benchmark(number_of_states, vector_alphabet_size, mode, repetitions, seed);
+    // создание бенчмарка
+    auto bench = benchmarkBuilder{}.withInput(min_states, max_states, intermediate_number,
+            seed, repetitions, mode, vector_number_of_states, vector_alphabet_size).build(); 
+    bench.print();
+    bench.run_benchmark(); // запуск бенчмарка
 
     cout << "\nНажмите Enter, чтобы закрыть окно...";
     cin.get();  // ждёт нажатия Enter
