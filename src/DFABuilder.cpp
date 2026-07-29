@@ -22,22 +22,15 @@ DFA5::DFA5(
     const vector<string>& perm,
     const vector<string>& alph,
     const unordered_map<string, unordered_map<string, string>>& trans,
-    const vector<string>& str_transition
+    const vector<string>& str_transition,
+    const string current
 ) : start_state(start), states(st), permitted_states(perm),
-    alphabet(alph), transitions(trans), string_transition(str_transition) {}
+    alphabet(alph), transitions(trans), string_transition(str_transition), current_state(current) {}
 
-DFA5 DFA5::fromCSV(const string& filename){
+DFABuilder& DFABuilder::withCSV(const string& filename){
     // Вспомогательные структуры для чтения
     string token;
     string Line;
-
-    // Структуры для чтения
-    vector<string> string_transition;
-    vector<string> permitted_states;
-    string start_state;
-    vector<string> alphabet;
-    vector<string> states;
-    unordered_map<string, unordered_map<string, string>> transitions;
 
     ifstream file(filename);
     if (!file.is_open()) {
@@ -106,9 +99,13 @@ DFA5 DFA5::fromCSV(const string& filename){
             }
         }
     }
-
-    return DFA5(start_state, states, permitted_states, alphabet, transitions, string_transition);
+    
+    return *this;
 };
+
+DFA5 DFABuilder::build() const{
+    return DFA5(start_state, states, permitted_states, alphabet, transitions, string_transition, start_state);
+}
 
 void DFA5::print(){
     // Информация о ДКА из файла
@@ -156,6 +153,9 @@ void DFA5::print(){
         printf("%s ", cls.c_str());
     }
     printf("\n");
+
+    cout << "Текущее состояние - " << current_state << endl;
+    cout << endl;
 
 
 }
@@ -221,7 +221,7 @@ void DFA5::exportCSV(const string& filename) {
         // Добавляем два пустых поля (;;) для соответствия формату
         file << ";;\n";
     }
-    printf("\nДКА сохранен в %s\n\n",filename.c_str());
+    printf("\n====== ДКА сохранен в %s ======\n",filename.c_str());
 }
 
 vector<vector<string>> DFA5::computePartition() const {
@@ -538,15 +538,71 @@ DFA5 DFA5::CreateNewTransitions(const vector<vector<string>>& Partition) const {
         }
     }
 
+    // Обновление текущего состояния
+    auto new_current_state = stateToNewState[current_state];
 
-    return DFA5(new_start_state, newStates, newPermitted, alphabet, newTransitions, string_transition);
+
+    return DFA5(new_start_state, newStates, newPermitted, alphabet, newTransitions, string_transition, new_current_state);
 }
 
 
 void DFA5::minimize(){
     auto Partition = computePartition();
-    auto minimizedDFA = DFA5::CreateNewTransitions(Partition);
+    auto minimizedDFA = CreateNewTransitions(Partition);
     *this = minimizedDFA; 
+    cout << "\n========= Минимизация ========" << endl;
+    print();
 }
+
+
+void DFA5::transit_string(const vector<string>& str) {
+    cout << "\n===== Осуществление перехода ====="<< endl;
+    cout << "Переход из состояния - " << current_state << endl;
+    cout << "По строке - "; 
+    auto flag = true;
+    // Обработка каждого символа
+    for (string ch : str) {   
+        // Вывод строки перехода
+        if (flag) {
+            cout << ch;
+            flag = false;
+        }
+        else{
+            cout << ", " << ch;
+        }
+        
+        // Ищем таблицу переходов из текущего состояния
+        auto state_it = transitions.find(current_state);
+        if (state_it == transitions.end()) {
+            std::cout << "\n-----------Нет переходов из состояния " << current_state << "---------------\n";
+            break; // автомат застрял
+        }
+        // Ищем переход по текущему символу
+        // Внутренняя таблица – это unordered_map<string, string>
+        auto sym_it = state_it->second.find(ch);
+        if (sym_it == state_it->second.end()) {
+            std::cout << "\n------------Нет перехода по символу '" << ch << "'-------------------\n";
+            break; // переход не определён
+        }
+
+        // Выполняем переход
+        current_state = sym_it->second;
+        //std::cout << "\nПереход по '" << ch << "' → состояние " << current_state << "\n";
+    }
+    cout << "\nВ состояние - " << current_state << endl;
+    cout << endl;
+
+}
+
+
+void DFA5::transit_Input(const vector<string>& input){
+    transit_string(input);
+}
+
+void DFA5::transit_fromCSV(){
+    transit_string(string_transition);
+}
+
+
 
 }

@@ -18,10 +18,12 @@ class DFA5 {
         vector<string> alphabet;
         unordered_map<string, unordered_map<string, string>> transitions;
 
-        // Дополнительное поле
+        // Дополнительные поля
         vector<string> string_transition;
+        string current_state;
 
 
+        // Приватный конструктор
         DFA5(
             const string& start,
             const vector<string>& st,
@@ -29,20 +31,43 @@ class DFA5 {
             const vector<string>& alph,
             const unordered_map<string, unordered_map<string, string>>& trans,
 
-            const vector<string>& str_transition
+            const vector<string>& str_transition,
+            const string current
+            
         );
 
         vector<vector<string>> computePartition() const;
         DFA5 CreateNewTransitions(const vector<vector<string>>& Partition) const;
+        void transit_string(const vector<string>& str);
 
     public:
-        static DFA5 fromCSV(const string& filename);
+        //static DFA5 fromCSV(const string& filename);
         void print();
         void exportCSV(const string& filename);
         void minimize();
+        void transit_Input(const vector<string>& input);
+        void transit_fromCSV();
 
+        friend class DFABuilder;
 };
 
+class DFABuilder {
+    private:
+        // Поля пятикортежа 
+        string start_state;   
+        vector<string> states; 
+        vector<string> permitted_states;
+        vector<string> alphabet;
+        unordered_map<string, unordered_map<string, string>> transitions;
+
+        // Дополнительные поля
+        vector<string> string_transition;
+        string current_state;
+
+    public:
+        DFABuilder& withCSV(const std::string& filename); // Чтение CSV
+        DFA5 build() const; // Создание DFA
+};
 
 
 struct DFA {

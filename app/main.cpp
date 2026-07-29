@@ -14,10 +14,11 @@ int main() {
     system("chcp 65001 > nul"); 
 
     
-    DFA5 dfa = DFA5::fromCSV("input.csv"); // Чтение ДКА из csv файла
+    auto dfa = DFABuilder{}.withCSV("input.csv").build(); // Чтение ДКА из csv файла
     dfa.print(); // Вывод ДКА в консоль
+    dfa.transit_fromCSV();
+    dfa.transit_Input({"0","1","0","1"});
     dfa.minimize(); // Минимизация ДКА
-    dfa.print(); // Вывод нового ДКА в консоль
     dfa.exportCSV("output.csv"); // Запись нового ДКА в файл
 
 
