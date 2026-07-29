@@ -338,8 +338,7 @@ void DFA5::minimize(){
     auto Partition = computePartition();
     auto minimizedDFA = CreateNewTransitions(Partition);
     *this = minimizedDFA; 
-    cout << "\n========= Минимизация ========" << endl;
-    print();
+    //cout << "\n========= Минимизация ========" << endl;
 }
 
 }

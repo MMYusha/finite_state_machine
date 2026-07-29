@@ -66,34 +66,10 @@ class DFABuilder {
 
     public:
         DFABuilder& withCSV(const std::string& filename); // Чтение CSV
+        DFABuilder& generatedDFA(int number_of_states, int alphabet_size, const string& mode, int seed); // генерация ДКА с заданными параметрами
         DFA5 build() const; // Создание DFA
 };
 
-
-struct DFA {
-    vector<string> string_transition;
-    vector<string> permited_state;
-    string start_state;
-    vector<string> alphabet;
-    vector<string> states;
-    unordered_map<string, unordered_map<string, string>> transitions;
-};
-
-string transit(const vector<string>& input, string current,
-              const unordered_map<string, unordered_map<string, string>>& transitions);
-
-vector<vector<string>> DFAmin(
-    const vector<string>& alphabet,
-    const vector<string>& Q, 
-    const vector<string>& F,
-    const unordered_map<string, unordered_map<string, string>>& transitions);
-
-DFA CreateNewTransitions(
-    DFA OldDfa,
-    vector<vector<string>> P);
-
-DFA DFAinput(string filename);
-void writeDFA(const string& filename, const DFA& dfa);
 
 void run_benchmark(
         vector<int> number_of_states,
