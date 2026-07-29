@@ -6,11 +6,9 @@
 add_library(func_DFA STATIC
     transit.cpp    
     DFAmin.cpp
-    CreateNewTransitions.cpp
-    DFAinput.cpp
-    writeDFA.cpp
     benchmark.cpp
     DFABuilder.cpp
+    DFA.cpp
 )
 
 # делаем доступными публичные заголовочные файлы
