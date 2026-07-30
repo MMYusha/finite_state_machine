@@ -163,6 +163,20 @@ DFABuilder& DFABuilder::generatedDFA(int number_of_states, int alphabet_size, co
     return *this;
 }
 
+DFABuilder& DFABuilder::withComponents( string start_state, 
+                            vector<string> states, 
+                            vector<string> permitted_states, 
+                            vector<string> alphabet, 
+                            unordered_map<string, unordered_map<string, string>> transitions){
+    this->start_state = start_state;
+    this->states = states;
+    this->permitted_states = permitted_states;
+    this->alphabet = alphabet;
+    this->transitions = transitions;
+    
+    return *this;
+    }
+
 DFA5 DFABuilder::build() const{
     return DFA5(start_state, states, permitted_states, alphabet, transitions, string_transition, start_state);
 }

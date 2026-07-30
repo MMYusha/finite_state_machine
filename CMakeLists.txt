@@ -19,7 +19,7 @@ set(CMAKE_BUILD_TYPE Debug)
 # cmake -D BUILD_TESTS=ON ..
 # а билд как обычно, cmake --build .
 
-option(BUILD_TESTS OFF)
+option(BUILD_TESTS ON)
 
 # экспорт команд компиляции - очень полезная функция, если используете языковой сервер
 # или вам нужно быстро передать команды сборки куда-то еще

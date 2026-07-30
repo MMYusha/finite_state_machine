@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 
+
 using namespace std;
 
 namespace func_DFA {
@@ -50,6 +51,8 @@ class DFA5 {
 
         friend class DFABuilder;
         friend class benchmark;
+
+        friend class DFATestHelper; // для тестов
 };
 
 class DFABuilder {
@@ -68,9 +71,23 @@ class DFABuilder {
     public:
         DFABuilder& withCSV(const std::string& filename); // Чтение CSV
         DFABuilder& generatedDFA(int number_of_states, int alphabet_size, const string& mode, int seed); // генерация ДКА с заданными параметрами
+        DFABuilder& withComponents( string start_state, 
+                                    vector<string> states, 
+                                    vector<string> permitted_states, 
+                                    vector<string> alphabet, 
+                                    unordered_map<string, unordered_map<string, string>> transitions); // создание ДКА из компонент
+
         DFA5 build() const; // Создание DFA
 };
 
+// =================================================================================
+
+class DFATestHelper {
+    public:
+        static vector<vector<string>> getPartition(const DFA5& dfa);
+    };
+
+// =================================================================================
 
 class benchmark{
     private:

@@ -10,6 +10,7 @@ add_library(func_DFA STATIC
     benchmarkBuilder.cpp
     DFA.cpp
     DFABuilder.cpp
+    DFATestHelper.cpp
 )
 
 # делаем доступными публичные заголовочные файлы
