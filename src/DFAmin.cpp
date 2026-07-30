@@ -43,7 +43,13 @@ vector<vector<string>> DFA5::computePartition() const {
         }
     }
 
-    // 4) Входные данные не пустые
+    // 4) Начальное состояние start_state присутствует в states
+    if (find(states.begin(), states.end(), start_state) == states.end()){
+        throw invalid_argument("Начальное состояние \"" + start_state + "\" не найдено в states");
+    }
+
+
+    // 5) Входные данные не пустые
     if (alphabet.empty()) {
         throw std::invalid_argument("Алфавит не может быть пустым");
     }
@@ -56,6 +62,8 @@ vector<vector<string>> DFA5::computePartition() const {
     if (transitions.empty()) {
         throw std::invalid_argument("Таблица переходов не может быть пустой");
     }
+
+
     // ----- КОНЕЦ ПРОВЕРОК -----
 
 
