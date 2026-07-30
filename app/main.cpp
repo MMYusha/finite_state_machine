@@ -4,121 +4,47 @@
 #include <string>
 #include <vector>
 
-#include <func_transition/transit.hpp>
-#include <func_minimization/DFAmin.hpp>
-#include <func_input/DFAinput.hpp>
-#include <func_benchmark/benchmark.hpp>
+#include <func_DFA/DFA.hpp>
 
 using namespace std;
-using namespace func_transition;
-using namespace func_minimization;
-using namespace func_input;
-
+using namespace func_DFA;
 
 
 int main() {
-    system("chcp 65001 > nul"); 
-    // Типы для читаемости
-    using State = string;
-    using Symbol = string;
+    system("chcp 65001 > nul"); // Для корректного вывода русского языка
+
+    // ================= Пример использования ДКА =================
+    auto dfa = DFABuilder{}.withCSV("input.csv").build(); // Чтение ДКА из csv файла
+    dfa.print(); // Вывод ДКА в консоль
+    dfa.transitFromCSV(); // Переход по строке, прочитанной в CSV 
+    dfa.resetCurrentState(); // Сброс ДКА в начальное состояние
+    dfa.transitInput({"0","1","0","1"}); // Переход по заданной строке
+    dfa.minimize(); // Минимизация ДКА
+    dfa.exportCSV("output.csv"); // Запись нового ДКА в файл
 
 
-    // Чтение ДКА из csv файла
-    string filename = "input.csv";
-    Result res;
-    res = DFAinput(filename);
 
 
-    // Информация о ДКА из файла
-    cout << "\nСтрока перехода - ";
-    for (auto cls : res.string_transition) {   
-        printf("%s ", cls.c_str());
-    }
-    printf("\n");
-
-    cout << "Допустимые состояния - ";
-    for (auto cls : res.permited_state) {   
-        printf("%s ", cls.c_str());
-    }
-    printf("\n");
-
-    cout << "Начальное состояние - " << res.start_state << "\n";
-
-    cout << "Алфавит - ";
-    for (auto cls : res.alphabet) {   
-        printf("%s ", cls.c_str());
-    }
-    printf("\n\n");
-
-
-    // Инициализация ДКА
-    State current = res.start_state;
-    vector<string> F = res.permited_state;
-    vector<string> input = res.string_transition; // пример входной строки из файла
-    vector<string> E = res.alphabet;
-    vector<string> Q = res.states;
-    unordered_map<string, unordered_map<string, string>> transitions = res.transitions;
-
-
-    // Обработка строки перехода
-    State final_state = transit(input, current, transitions);
-    cout << "Переход в состояние " << final_state << " из начального "<< res.start_state  << "\n\n";
-
-    
-    // Минимизация ДКА
-    vector<vector<string>> P = DFAmin(E,Q,F,transitions);
-    printf("Разбиения:\n");
-    for (auto cls : P) {
-        printf("{ ");
-        for (auto state : cls) {
-            printf("%s ", state.c_str());
-        }
-        printf("}\n");
-    }
-    printf("\n");
-
-    res = CreateNewTransitions(res, P);
-    writeDFA("output.csv", res);
-
-
-    // ================= Фактическая сложность =================
+    // ================= Бенчмарк =================
     // параметры бенчмарка
-    vector<int> number_of_states;
-    int alphabet_size=2;
+    vector<int> vector_number_of_states;
+    vector<int> vector_alphabet_size={2};
     string mode = "full";
-    int repetitions=10;
+    int repetitions=20;
     int seed=42;
 
     // массив размеров ДКА
     int min_states = 1;
-    int max_states = 4096;
+    int max_states = 1024;
     int intermediate_number = 5;
-    int n = min_states;
-    // увеличение размеров ДКА в зависимости n**2
-    while (n < max_states) {
-        if (n == 1) {
-            n = 2;
-        }          // если начали с 1, следующая степень 2
-        else n *= 2;
-        
-        // промежуточные значения
-        if (!number_of_states.empty()){;
-            int last = number_of_states.back();
-            int step = (n - last)/intermediate_number;
-            cout << step;
-            if (number_of_states.back() + step*(intermediate_number-1) < n && step > 0){
-                for (int count = 0; count < intermediate_number-1; ++count){
-                    number_of_states.push_back(number_of_states.back() + step);
-                }
-            }
-        }
-        number_of_states.push_back(n);
 
-    }
+    // создание бенчмарка
+    auto bench = benchmarkBuilder{}.withInput(min_states, max_states, intermediate_number,
+            seed, repetitions, mode, vector_number_of_states, vector_alphabet_size).build(); 
+    bench.print();
+    bench.run_benchmark(); // запуск бенчмарка
 
-    func_benchmark::run_benchmark(number_of_states, alphabet_size, mode, repetitions, seed);
-
-    std::cout << "Нажмите Enter, чтобы закрыть окно...";
-    std::cin.get();  // ждёт нажатия Enter
+    cout << "\nНажмите Enter, чтобы закрыть окно...";
+    cin.get();  // ждёт нажатия Enter
     return 0;
 }

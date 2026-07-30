@@ -4,124 +4,130 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
-#include <func_transition/transit.hpp>
-#include <func_input/DFAinput.hpp>
+#include <func_DFA/DFA.hpp>
 
-using namespace func_transition;
-using namespace func_input;
+using namespace func_DFA;
 using namespace std;
 
-
 TEST(DFATests, TransitTest1) {
-    // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
-    
-     system("chcp 65001 > nul"); 
-    // хороший тест делится на три части - Arrange-Act-Assert (либо Given-When-Then, называйте как нравится)
-    
-    // ARRANGE - это подготовка почвы; здесь нужные объявления и операции для создания ситуации, которую хотим проверить
-    using State = string;
-    using Symbol = string;
-
-    // Вложенная хеш-таблица переходов:
-    // состояние -> (символ -> следующее состояние)
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
-
-    // Заполнение переходов согласно таблице
+    system("chcp 65001 > nul"); 
+    // ================ ARRANGE ===============
+    string start = "A";                                                 // начальное состояние
+    vector<string> states = {"A", "B", "C", "D", "E", "F", "G", "H"};   // множество состояний
+    vector<string> alphabet = {"0","1"};                                // алфавит
+    vector<string> Permitted_states = {"C"};                            // множество допустимых состояний
+    unordered_map<string, unordered_map<string, string>> transitions;   // Вложенная хеш-таблица переходов: состояние -> (символ -> следующее состояние)
     transitions["A"]["0"] = "B";
     transitions["A"]["1"] = "F";
-
     transitions["B"]["0"] = "G";
     transitions["B"]["1"] = "C";
-
     transitions["C"]["0"] = "A";
     transitions["C"]["1"] = "C";
-
     transitions["D"]["0"] = "C";
     transitions["D"]["1"] = "G";
-
     transitions["E"]["0"] = "H";
     transitions["E"]["1"] = "F";
-
     transitions["F"]["0"] = "C";
     transitions["F"]["1"] = "G";
-
     transitions["G"]["0"] = "G";
     transitions["G"]["1"] = "E";
-
     transitions["H"]["0"] = "G";
     transitions["H"]["1"] = "C";
 
-    string start = "A";                 // начальное состояние
-    string current = start;
+    // Создание ДКА
+    auto dfa = DFABuilder{}.withComponents( start,
+                                            states,
+                                            Permitted_states,
+                                            alphabet,
+                                            transitions).build();
+                                            
+    // ============== ACT ===================
+    dfa.transitInput({"0","1","0","1"});
+    auto FinalState1 = dfa.getCurrentState();
+    dfa.resetCurrentState();
 
-    vector<string> Q = {"A", "B", "C", "D", "E", "F", "G", "H"}; // множество состояний
-    vector<string> E = {"0","1"};
-    vector<string> F = {"C"};           // множество допустимых состояний
+    dfa.transitInput({"0","0","0","1","0","0","1","0","1","1","1","0","1","1"});
+    auto FinalState2 = dfa.getCurrentState();
+    dfa.resetCurrentState();
+
+    dfa.transitInput({"0"});
+    auto FinalState3 = dfa.getCurrentState();
+    dfa.resetCurrentState();
+
+    dfa.transitInput({"0","1","E","0","1"});
+    auto FinalState4 = dfa.getCurrentState();
+    dfa.resetCurrentState();
+
+    dfa.transitInput({});
+    auto FinalState5 = dfa.getCurrentState();
+    dfa.resetCurrentState();
 
 
-    // ACT - это само действие; именно то, что нам нужно проверить
-    vector<string> input1 = {"0","1","0","1"}; // пример входной строки
-    State final_state1 = func_transition::transit(input1, current, transitions);
-
-    vector<string> input2 = {"0","0","0","1","0","0","1","0","1","1","1","0","1","1"}; // "00010010111011" пример входной строки A 0B 0G 0G 1E 0H 0G 1E 0H 1C 1C 1C 0A 1F 1G
-    State final_state2 = func_transition::transit(input2, current, transitions);
-
-    vector<string> input3 = {"0"}; // "0"
-    State final_state3 = func_transition::transit(input3, current, transitions);
-
-    vector<string> input4 = {"0","1","E","0","1"}; // "01E01"
-    State final_state4 = func_transition::transit(input4, current, transitions);
-
-    vector<string> input5 = {}; // пустая строка
-    State final_state5 = func_transition::transit(input5, current, transitions);
-
-    // ASSERT - проверка результатов; именно ASSERT определяет, пройден тест или нет
-    ASSERT_EQ("F", final_state1);
-    ASSERT_EQ("G", final_state2);
-    ASSERT_EQ("B", final_state3);
-    ASSERT_EQ("C", final_state4);
-    ASSERT_EQ("A", final_state5);
+    // ============== ASSERT ===================
+    ASSERT_EQ("F", FinalState1);
+    ASSERT_EQ("G", FinalState2);
+    ASSERT_EQ("B", FinalState3);
+    ASSERT_EQ("C", FinalState4);
+    ASSERT_EQ("A", FinalState5);
 }
+
+
 TEST(DFATests, TransitTest2) {
-    system("chcp 65001 > nul");
-
-    // ARRANGE: автомат с двумя состояниями: "Even" и "Odd"
-    using State = std::string;
-    using Symbol = std::string;
-
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    system("chcp 65001 > nul"); 
+    // ================ ARRANGE ===============
+    string start = "Even";                                                 // начальное состояние
+    vector<string> states = {"Even", "Odd"};                             // множество состояний
+    vector<string> alphabet = {"0","1"};                                // алфавит
+    vector<string> Permitted_states = {"Even"};                            // множество допустимых состояний
+    unordered_map<string, unordered_map<string, string>> transitions;   // Вложенная хеш-таблица переходов: состояние -> (символ -> следующее состояние)
     transitions["Even"]["0"] = "Even";
     transitions["Even"]["1"] = "Odd";
     transitions["Odd"]["0"]  = "Odd";
     transitions["Odd"]["1"]  = "Even";
 
-    State start = "Even";
-    std::vector<std::string> Q = {"Even", "Odd"};
-    std::vector<std::string> E = {"0", "1"};
-    std::vector<std::string> F = {"Even"};  // допускающее – чётное число единиц
+    // Создание ДКА
+    auto dfa = DFABuilder{}.withComponents( start,
+                                            states,
+                                            Permitted_states,
+                                            alphabet,
+                                            transitions).build();
+                                       
+                                            
+    // ============== ACT ===================
+    dfa.transitInput({"0", "1", "0", "1"});
+    auto FinalState1 = dfa.getCurrentState();
+    dfa.resetCurrentState();
 
-    // ACT: подаём строки с разным числом единиц
-    State res1 = func_transition::transit({"0", "1", "0", "1"}, start, transitions); // две единицы -> Even
-    State res2 = func_transition::transit({"1", "0", "1"}, start, transitions);      // две единицы -> Even
-    State res3 = func_transition::transit({"1", "1", "1"}, start, transitions);      // три единицы -> Odd
-    State res4 = func_transition::transit({}, start, transitions);                   // пустая строка -> Even
+    dfa.transitInput({"1", "0", "1"});
+    auto FinalState2 = dfa.getCurrentState();
+    dfa.resetCurrentState();
 
-    // ASSERT
-    ASSERT_EQ("Even", res1);
-    ASSERT_EQ("Even", res2);
-    ASSERT_EQ("Odd",  res3);
-    ASSERT_EQ("Even", res4);
+    dfa.transitInput({"1", "1", "1"});
+    auto FinalState3 = dfa.getCurrentState();
+    dfa.resetCurrentState();
+
+    dfa.transitInput({});
+    auto FinalState4 = dfa.getCurrentState();
+    dfa.resetCurrentState();
+
+
+    // ============== ASSERT ===================
+    ASSERT_EQ("Even", FinalState1);
+    ASSERT_EQ("Even", FinalState2);
+    ASSERT_EQ("Odd",  FinalState3);
+    ASSERT_EQ("Even", FinalState4);
 }
 
+
+
 TEST(DFATests, TransitTest3) {
-    system("chcp 65001 > nul");
-
-    // ARRANGE: состояния: S (начальное, ничего не накоплено),
-    // S0 (последний символ – 0), S01 (последние два – 01 – допускающее)
-    using State = std::string;
-    using Symbol = std::string;
-
-    std::unordered_map<State, std::unordered_map<Symbol, State>> transitions;
+    system("chcp 65001 > nul"); 
+    // ================ ARRANGE ===============
+    string start = "S";                                                 // начальное состояние
+    vector<string> states = {"S", "S0", "S01"};                             // множество состояний
+    vector<string> alphabet = {"0","1"};                                // алфавит
+    vector<string> Permitted_states = {"S01"};                            // множество допустимых состояний
+    unordered_map<string, unordered_map<string, string>> transitions;   // Вложенная хеш-таблица переходов: состояние -> (символ -> следующее состояние)
     transitions["S"]["0"]  = "S0";
     transitions["S"]["1"]  = "S";
     transitions["S0"]["0"] = "S0";
@@ -129,26 +135,40 @@ TEST(DFATests, TransitTest3) {
     transitions["S01"]["0"]= "S0";
     transitions["S01"]["1"]= "S";
 
-    State start = "S";
-    std::vector<std::string> Q = {"S", "S0", "S01"};
-    std::vector<std::string> E = {"0", "1"};
-    std::vector<std::string> F = {"S01"};
+    // Создание ДКА
+    auto dfa = DFABuilder{}.withComponents( start,
+                                            states,
+                                            Permitted_states,
+                                            alphabet,
+                                            transitions).build();
+                                       
+                                            
+    // ============== ACT ===================
+    dfa.transitInput({"0", "1"});
+    auto FinalState1 = dfa.getCurrentState();
+    dfa.resetCurrentState();
 
-    // ACT
-    State res1 = func_transition::transit({"0", "1"}, start, transitions);           // "01" -> S01
-    State res2 = func_transition::transit({"1", "0", "1"}, start, transitions);      // "101" -> S01
-    State res3 = func_transition::transit({"0", "0", "1", "0"}, start, transitions); // "0010" -> S0 (не допускается)
-    State res4 = func_transition::transit({"1", "1"}, start, transitions);           // "11" -> S (не допускается)
-    State res5 = func_transition::transit({}, start, transitions);                   // пустая -> S (не допускается)
+    dfa.transitInput({"1", "0", "1"});
+    auto FinalState2 = dfa.getCurrentState();
+    dfa.resetCurrentState();
 
-    // ASSERT
-    ASSERT_EQ("S01", res1);
-    ASSERT_EQ("S01", res2);
-    ASSERT_EQ("S0",  res3);
-    ASSERT_EQ("S",   res4);
-    ASSERT_EQ("S",   res5);
+    dfa.transitInput({"0", "0", "1", "0"});
+    auto FinalState3 = dfa.getCurrentState();
+    dfa.resetCurrentState();
+
+    dfa.transitInput({"1", "1"});
+    auto FinalState4 = dfa.getCurrentState();
+    dfa.resetCurrentState();
+
+    dfa.transitInput({});
+    auto FinalState5 = dfa.getCurrentState();
+    dfa.resetCurrentState();
+
+
+    // ============== ASSERT ===================
+    ASSERT_EQ("S01", FinalState1);
+    ASSERT_EQ("S01", FinalState2);
+    ASSERT_EQ("S0",  FinalState3);
+    ASSERT_EQ("S", FinalState4);
+    ASSERT_EQ("S", FinalState5);
 }
-
-
-// если материал выше легко усвоили, почитайте также про TEST_F (test fixtures) и setup/teardown
-// в любом случае, вам поможет gtest primer 

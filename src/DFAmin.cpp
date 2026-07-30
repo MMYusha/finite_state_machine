@@ -1,4 +1,4 @@
-#include <func_minimization/DFAmin.hpp> // публичные include подключаем как системные
+#include <func_DFA/DFA.hpp> // публичные include подключаем как системные
 #include <iostream>   // для std::cout
 #include <vector> 
 #include <unordered_map>
@@ -7,29 +7,26 @@
 #include <queue>
 #include <utility>   // для std::pair
 #include <algorithm>   // для std::sort
+
 using namespace std;
 
+namespace func_DFA{
 
-vector<vector<string>> func_minimization::DFAmin(
-    const vector<string>& alphabet,
-    const vector<string>& Q, 
-    const vector<string>& F,
-    const unordered_map<string, unordered_map<string, string>>& transitions) {
-    
-
+vector<vector<string>> DFA5::computePartition() const {
+    // Алгоритм минимизации Хопкрофта О(alphabet*n*log2n)
 
     // ----- ПРОВЕРКИ ВХОДНЫХ ДАННЫХ -----
-    // 1) Все состояния из Q должны быть определены в transitions
-    for (const string& state : Q) {
+    // 1) Все состояния из states должны быть определены в transitions
+    for (const string& state : states) {
         if (transitions.find(state) == transitions.end()) {
             throw invalid_argument("Состояние \"" + state + "\" не найдено в таблице переходов");
         }
     }
 
-    // 2) Все допускающие состояния из F должны присутствовать в Q
-    for (const string& state : F) {
-        if (find(Q.begin(), Q.end(), state) == Q.end()) {
-            throw invalid_argument("Допустимое состояние \"" + state + "\" не найдено в Q");
+    // 2) Все допускающие состояния из permitted_states должны присутствовать в states
+    for (const string& state : permitted_states) {
+        if (find(states.begin(), states.end(), state) == states.end()) {
+            throw invalid_argument("Допустимое состояние \"" + state + "\" не найдено в states");
         }
     }
 
@@ -46,30 +43,37 @@ vector<vector<string>> func_minimization::DFAmin(
         }
     }
 
-    // 4) Входные данные не пустые
+    // 4) Начальное состояние start_state присутствует в states
+    if (find(states.begin(), states.end(), start_state) == states.end()){
+        throw invalid_argument("Начальное состояние \"" + start_state + "\" не найдено в states");
+    }
+
+
+    // 5) Входные данные не пустые
     if (alphabet.empty()) {
         throw std::invalid_argument("Алфавит не может быть пустым");
     }
-    if (Q.empty()) {
+    if (states.empty()) {
         throw std::invalid_argument("Множество состояний не может быть пустым");
     }
-    if (F.empty()) {
+    if (permitted_states.empty()) {
         throw std::invalid_argument("Множество допускающих состояний не может быть пустым");
     }
     if (transitions.empty()) {
         throw std::invalid_argument("Таблица переходов не может быть пустой");
     }
+
+
     // ----- КОНЕЦ ПРОВЕРОК -----
 
 
     // ----- УДАЛЕНИЕ НЕДОСТИЖИМЫХ СОСТОЯНИЙ -----
     // Создаём изменяемые копии
-    vector<string> localQ = Q;
-    vector<string> localF = F;
+    vector<string> localStates = states;
+    vector<string> local_permitted_states = permitted_states;
     unordered_map<string, unordered_map<string, string>> localTransitions = transitions;
 
-    if (!localQ.empty()) {
-        string start_state = localQ[0];   // первое состояние считаем начальным
+    if (!localStates.empty()) {
         unordered_set<string> reachable;
         queue<string> bfs;
         bfs.push(start_state);
@@ -91,11 +95,11 @@ vector<vector<string>> func_minimization::DFAmin(
         }
 
         // Формируем новые множества
-        vector<string> newQ;
+        vector<string> newStates;
         unordered_map<string, unordered_map<string, string>> newTransitions;
-        for (const string& state : localQ) {
+        for (const string& state : localStates) {
             if (reachable.find(state) != reachable.end()) {
-                newQ.push_back(state);
+                newStates.push_back(state);
                 auto it = localTransitions.find(state);
                 if (it != localTransitions.end()) {
                     newTransitions[state] = it->second;
@@ -103,20 +107,20 @@ vector<vector<string>> func_minimization::DFAmin(
             }
         }
 
-        vector<string> newF;
-        for (const string& state : localF) {
+        vector<string> new_permitted_states;
+        for (const string& state : local_permitted_states) {
             if (reachable.find(state) != reachable.end()) {
-                newF.push_back(state);
+                new_permitted_states.push_back(state);
             }
         }
 
         // Заменяем локальные данные
-        localQ = std::move(newQ);
-        localF = std::move(newF);
-        localTransitions = std::move(newTransitions);
+        localStates = move(newStates);
+        local_permitted_states = move(new_permitted_states);
+        localTransitions = move(newTransitions);
 
-        if (localQ.empty()) {
-            throw std::runtime_error("После удаления недостижимых состояний не осталось ни одного состояния");
+        if (localStates.empty()) {
+            throw runtime_error("После удаления недостижимых состояний не осталось ни одного состояния");
         }
     }
     // ----- КОНЕЦ УДАЛЕНИЯ -----
@@ -125,7 +129,7 @@ vector<vector<string>> func_minimization::DFAmin(
 
     // Создание хэш-таблицы обратных переходов
     unordered_map<string, unordered_map<string, vector<string>>> Inv;
-    for (string state : localQ){ // перебор всех состояний
+    for (string state : localStates){ // перебор всех состояний
         auto it = localTransitions.find(state);
         for (auto pair : it->second){ // перебор всех переходов из состояния
             string symbol = pair.first; 
@@ -135,17 +139,17 @@ vector<vector<string>> func_minimization::DFAmin(
     }
 
 
-    //P←{F, Q∖F}
-    vector<unordered_set<string>> P ;
-    //добавление в разбиение P допускающих состояний
-    P.push_back(unordered_set<string>(localF.begin(), localF.end()));
+    //P←{permitted_states, Q∖F}
+    vector<unordered_set<string>> Partition ;
+    //добавление в разбиение Partition допускающих состояний
+    Partition.push_back(unordered_set<string>(local_permitted_states.begin(), local_permitted_states.end()));
     
-    // добавление в разбиение P недопускающих состояний
+    // добавление в разбиение Partition недопускающих состояний
     // Инициализация классов разбиения Class
     unordered_map<string, int> Class; // классы разбиения Class
-    unordered_set<string> setF(localF.begin(), localF.end()); //хэш-таблица для быстрого поиска
+    unordered_set<string> setF(local_permitted_states.begin(), local_permitted_states.end()); //хэш-таблица для быстрого поиска
     vector<string> nonF;
-    for (string state : localQ){
+    for (string state : localStates){
         if (setF.find(state) == setF.end()){
             nonF.push_back(state);
             Class[state] = 1;
@@ -155,12 +159,12 @@ vector<vector<string>> func_minimization::DFAmin(
         }
     }
     if (!nonF.empty()) {
-        P.push_back(unordered_set<string>(nonF.begin(), nonF.end()));
+        Partition.push_back(unordered_set<string>(nonF.begin(), nonF.end()));
     }
     
     // Инициализация очереди Queue
     queue<pair<int,string>> Queue;
-    for (int idx = 0; idx < static_cast<int>(P.size()); ++idx) {
+    for (int idx = 0; idx < static_cast<int>(Partition.size()); ++idx) {
         for (const string& c : alphabet) {
             Queue.push({idx, c});
         }
@@ -169,30 +173,30 @@ vector<vector<string>> func_minimization::DFAmin(
     // Инициализация классов разбиения Class
 
     // Основной цикл
-    vector<int> Count(localQ.size(), 0);
-    vector<int> Twin(localQ.size(), 0);
+    vector<int> Count(localStates.size(), 0);
+    vector<int> Twin(localStates.size(), 0);
     vector<int> Involved;
 
 
     long long iterations = 0;
-    const long long MAX_ITERATIONS = 10000000; // 10 миллионов – запас
+    const long long MAX_ITERATIONS = 10000000; 
 
 
     while (!Queue.empty()){
         ++iterations;
         //====================================================================
         // ----- ДОБАВЛЕНО: защита от бесконечного роста классов -----
-        if (P.size() > localQ.size()) {
+        if (Partition.size() > localStates.size()) {
             throw std::runtime_error(
                 "Количество классов превысило число состояний: " + 
-                std::to_string(P.size()) + " > " + std::to_string(localQ.size())
+                std::to_string(Partition.size()) + " > " + std::to_string(localStates.size())
             );
         }
 
         // ----- ДОБАВЛЕНО: периодический вывод прогресса -----
         if (iterations % 100000 == 0) {
             std::cout << "[DFAmin] Iteration " << iterations 
-                      << ", classes: " << P.size() 
+                      << ", classes: " << Partition.size() 
                       << ", queue: " << Queue.size() << std::endl;
         }
 
@@ -209,7 +213,7 @@ vector<vector<string>> func_minimization::DFAmin(
         // Получение пары из очереди [индекс класса Сплиттера, символ алфавита]
         auto [C, a] = Queue.front();
         Queue.pop();
-        auto splitter = P[C]; 
+        auto splitter = Partition[C]; 
         
         // Заполнение Involved 
         Involved.clear();   
@@ -225,9 +229,9 @@ vector<vector<string>> func_minimization::DFAmin(
 
         // Проверка возможности разбиения классов в Involved по сплиттеру С
         for (int i : Involved){
-            if (Count[i] > 0 && Count[i] < static_cast<int>(P[i].size()) && P.size() < localQ.size()) {//-------------------------------------
-                P.push_back({});
-                Twin[i] = static_cast<int>(P.size()) - 1;
+            if (Count[i] > 0 && Count[i] < static_cast<int>(Partition[i].size()) && Partition.size() < localStates.size()) {//------------------------
+                Partition.push_back({});
+                Twin[i] = static_cast<int>(Partition.size()) - 1;
             }
         }
 
@@ -237,9 +241,9 @@ vector<vector<string>> func_minimization::DFAmin(
                 int i = Class[r];
                 int j = Twin[i];
                 if (j != 0){
-                    // перенос r из P[i] в P[j]
-                    P[i].erase(r); // удаление r из старого класса
-                    P[j].insert(r); // добавление r в новый класс
+                    // перенос r из Partition[i] в Partition[j]
+                    Partition[i].erase(r); // удаление r из старого класса
+                    Partition[j].insert(r); // добавление r в новый класс
                     Class[r] = j; // обновление индекса класса, в котором r
                 }
             }
@@ -248,13 +252,13 @@ vector<vector<string>> func_minimization::DFAmin(
         for (int i : Involved){
             int j = Twin[i];
             if (j != 0){
-                if (P[j].size()<P[i].size()){ // парный класс должен быть меньшего размера
-                    swap(P[i],P[j]);
+                if (Partition[j].size()<Partition[i].size()){ // парный класс должен быть меньшего размера
+                    swap(Partition[i],Partition[j]);
                 }
-                for (const string& r : P[i]) { // -------------------------------------- Исправление
+                for (const string& r : Partition[i]) { // -------------------------------------- Исправление
                     Class[r] = i;
                 }
-                for (auto r : P[j]){
+                for (auto r : Partition[j]){
                     Class[r] = j;
                 }
                 for (string c : alphabet){
@@ -267,13 +271,82 @@ vector<vector<string>> func_minimization::DFAmin(
     }
 
     // Преобразование результата в vector<vector<char>> для возврата
-    vector<vector<string>> result;
-    result.reserve(P.size());
-    for (auto cls : P) {
-        result.push_back(vector<string>(cls.begin(), cls.end()));
+    vector<vector<string>> resultPartition;
+    resultPartition.reserve(Partition.size());
+    for (auto cls : Partition) {
+        resultPartition.push_back(vector<string>(cls.begin(), cls.end()));
     }
-    for (auto& vec : result) {
+    for (auto& vec : resultPartition) {
         sort(vec.begin(), vec.end());
     }
-    return result;
+    return resultPartition;
+}
+
+
+DFA5 DFA5::CreateNewTransitions(const vector<vector<string>>& Partition) const {
+
+    // отображение "старое состояние -> имя класса" 
+    unordered_map<string, string> stateToNewState;
+    vector<string> newStates;
+
+    for (auto cls : Partition) {
+        // Формируем имя класса как сумму состояний через '+'
+        string className;
+        for (size_t i = 0; i < cls.size(); ++i) {
+            if (i > 0) className += "+";
+            className += cls[i];
+        }
+        newStates.push_back(className);
+        for (string state : cls) {
+            stateToNewState[state] = className;   // запоминаем соответствие
+        }
+    }
+
+    // построение новых переходов 
+    unordered_map<string, unordered_map<string, string>> newTransitions;
+
+    for (auto cls : Partition) {
+        string className = stateToNewState[cls[0]]; // имя текущего класса
+
+        unordered_map<string, string> trans; // переходы для этого класса
+        for (string sym : alphabet) {
+            // Берем переход из любого состояния класса (возьмём первое)
+            string oldTarget = transitions.at(cls[0]).at(sym);
+            // Находим класс, в который попадаем
+            string newTarget = stateToNewState[oldTarget];
+            trans[sym] = newTarget;
+        }
+        newTransitions[className] = trans;
+    }
+
+    
+    // Обновление начального состояния
+    auto new_start_state = stateToNewState[start_state];
+    
+    // Обновление допустимых состояний
+    vector<string> newPermitted;
+    for (string st : permitted_states) {
+        auto it = stateToNewState.find(st);
+        if (it != stateToNewState.end()) {
+            // добавляем только уникальные классы
+            if (find(newPermitted.begin(), newPermitted.end(), it->second) == newPermitted.end())
+                newPermitted.push_back(it->second);
+        }
+    }
+
+    // Обновление текущего состояния
+    auto new_current_state = stateToNewState[current_state];
+
+
+    return DFA5(new_start_state, newStates, newPermitted, alphabet, newTransitions, string_transition, new_current_state);
+}
+
+
+void DFA5::minimize(){
+    auto Partition = computePartition();
+    auto minimizedDFA = CreateNewTransitions(Partition);
+    *this = minimizedDFA; 
+    //cout << "\n========= Минимизация ========" << endl;
+}
+
 }

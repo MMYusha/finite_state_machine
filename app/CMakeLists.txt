@@ -5,14 +5,11 @@ add_executable(main main.cpp)
 # линкуемся с библиотекой
 # если не знаете, что это значит, гуглим "этапы компиляции C++"
 target_link_libraries(main PRIVATE
-    func_minimization
-    func_transition
-    func_input
-    func_benchmark
+    func_DFA
 )
 
 # флаги компиляции для всех исходников приложения
 
-target_compile_options(func_transition PRIVATE
+target_compile_options(func_DFA PRIVATE
     -Wall -Wextra -Wpedantic
 )
