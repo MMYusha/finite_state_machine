@@ -28,6 +28,16 @@ DFA5::DFA5(
 ) : start_state(start), states(st), permitted_states(perm),
     alphabet(alph), transitions(trans), string_transition(str_transition), current_state(current) {}
 
+//Геттеры
+const string& DFA5::getStartState() const {return start_state;};   
+const vector<string>& DFA5::getStates() const {return states;}; 
+const vector<string>& DFA5::getPermittedStates() const {return permitted_states;};
+const vector<string>& DFA5::getAlphabet() const {return alphabet;};
+const unordered_map<string, unordered_map<string, string>>& DFA5::getTransitions() const {return transitions;};
+const vector<string>& DFA5::getStringTransition() const {return string_transition;};
+const string& DFA5::getCurrentState() const {return current_state;};
+
+void DFA5::resetCurrentState() {this->current_state = start_state;};
 
 void DFA5::print(){
     // Информация о ДКА из файла

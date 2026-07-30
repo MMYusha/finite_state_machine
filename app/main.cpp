@@ -16,8 +16,8 @@ int main() {
     // ================= Пример использования ДКА =================
     auto dfa = DFABuilder{}.withCSV("input.csv").build(); // Чтение ДКА из csv файла
     dfa.print(); // Вывод ДКА в консоль
-    dfa.transit_fromCSV(); // Переход по строке, прочитанной в CSV 
-    dfa.transit_Input({"0","1","0","1"}); // Переход по заданной строке
+    dfa.transitFromCSV(); // Переход по строке, прочитанной в CSV 
+    dfa.transitInput({"0","1","0","1"}); // Переход по заданной строке
     dfa.minimize(); // Минимизация ДКА
     dfa.exportCSV("output.csv"); // Запись нового ДКА в файл
 

@@ -42,12 +42,21 @@ class DFA5 {
         void transit_string(const vector<string>& str);
 
     public:
-        //static DFA5 fromCSV(const string& filename);
         void print();
         void exportCSV(const string& filename);
         void minimize();
-        void transit_Input(const vector<string>& input);
-        void transit_fromCSV();
+        void transitInput(const vector<string>& input);
+        void transitFromCSV();
+        void resetCurrentState();
+
+        //Геттеры
+        const string& getStartState() const;   
+        const vector<string>& getStates() const; 
+        const vector<string>& getPermittedStates() const;
+        const vector<string>& getAlphabet() const;
+        const unordered_map<string, unordered_map<string, string>>& getTransitions() const;
+        const vector<string>& getStringTransition() const;
+        const string& getCurrentState() const;
 
         friend class DFABuilder;
         friend class benchmark;
@@ -85,6 +94,7 @@ class DFABuilder {
 class DFATestHelper {
     public:
         static vector<vector<string>> getPartition(const DFA5& dfa);
+        static DFA5 getNewDFAwithPartition(const DFA5& dfa, const vector<vector<string>>& Partition);
     };
 
 // =================================================================================

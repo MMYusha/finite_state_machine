@@ -48,11 +48,11 @@ void DFA5::transit_string(const vector<string>& str) {
 }
 
 
-void DFA5::transit_Input(const vector<string>& input){
+void DFA5::transitInput(const vector<string>& input){
     transit_string(input);
 }
 
-void DFA5::transit_fromCSV(){
+void DFA5::transitFromCSV(){
     transit_string(string_transition);
 }
 
