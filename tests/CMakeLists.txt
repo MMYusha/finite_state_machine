@@ -10,7 +10,7 @@ add_executable(my_DFA_test
     #transit.test.cpp
     DFAmin.test.cpp
     CreateNewTransitions.test.cpp
-    #DFAinput.test.cpp
+    DFAinput.test.cpp
     #writeDFA.test.cpp
 )
 
