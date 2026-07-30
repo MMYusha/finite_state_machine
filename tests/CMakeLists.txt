@@ -11,7 +11,7 @@ add_executable(my_DFA_test
     DFAmin.test.cpp
     CreateNewTransitions.test.cpp
     DFAinput.test.cpp
-    #writeDFA.test.cpp
+    writeDFA.test.cpp
 )
 
 # линкуемся нашей библиотекой, а также с дефолтным мейном, чтобы не засорять им кодовую базу
