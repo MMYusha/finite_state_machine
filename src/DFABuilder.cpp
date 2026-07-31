@@ -37,7 +37,7 @@ DFABuilder& DFABuilder::withCSV(const string& filename){
     return *this;
 };
 
-//=====================================================================
+
 // Создание поля string_transition через CSV
 void DFABuilder::readStringTransition(ifstream& file){
     // Вспомогательные структуры для чтения
@@ -167,44 +167,77 @@ void DFABuilder::readStatesAndTransitions(ifstream& file){
 }
 //=======================================================================
 
+
+
 DFABuilder& DFABuilder::generatedDFA(int number_of_states, int alphabet_size, const string& mode, int seed) {
     // Проверки
-    if (number_of_states < 2) throw invalid_argument("number_of_states должно быть не меньше 2");
-    if (alphabet_size < 1) throw invalid_argument("alphabet_size должен быть положительным");
+    if (number_of_states < 2) 
+        throw invalid_argument("number_of_states должно быть не меньше 2");
+    if (alphabet_size < 1) 
+        throw invalid_argument("alphabet_size должен быть положительным");
     if (mode != "sparse" && mode != "full")
         throw invalid_argument("mode должен быть 'sparse' или 'full'");
 
-    // Генератор случайных чисел с фиксированным seed
-    mt19937 rng(seed);
-
     // 1. Создаём состояния и алфавит
-    for (int i = 0; i < number_of_states; ++i)
-        states.push_back("q" + to_string(i));
+    generateStates(number_of_states);
+    generateAlphabet(alphabet_size);
 
-    for (int i = 0; i < alphabet_size; ++i)
-        alphabet.push_back("a" + to_string(i));
-
-    // 2. Инициализируем таблицу переходов (все внутренние карты пусты)
-
-    for (const auto& state : states)
-        transitions[state] = {};
-
-    // 3. Строим цепочку по первому символу алфавита (гарантирует достижимость всех состояний)
-    for (int i = 0; i < number_of_states - 1; ++i) {
-        transitions[states[i]][alphabet[0]] = states[i + 1];
-    }
+    // 2. Создаём таблицу переходов с достижимостью всех состояний
+    generateTransitions();
 
     // 4. Вычисляем целевую плотность переходов
-    int capacity = number_of_states * alphabet_size;
+    int capacity = computeCapacity(mode);
+
+    // 5. Формируем список доступных ячеек (state, symbol), в которых ещё нет перехода
+    vector<pair<string, string>> available_keys = computeAvailableKeys(seed);
+
+    // 6. Добавляем недостающие переходы до capacity
+    addTransitionsToCapacity(available_keys, capacity, seed);
+
+    // 7. Начальное и финальные состояния
+    start_state = states[0];
+    permitted_states = {states[number_of_states - 1]};  // только последнее состояние
+
+    return *this;
+}
+
+void DFABuilder::generateStates(int number_of_states){
+    for (int i = 0; i < number_of_states; ++i)
+        states.push_back("q" + to_string(i));
+}
+
+void DFABuilder::generateAlphabet(int alphabet_size){
+    for (int i = 0; i < alphabet_size; ++i)
+        alphabet.push_back("q" + to_string(i));
+}
+
+void DFABuilder::generateTransitions(){
+    // Инициализируем таблицу переходов (все внутренние переходы пусты)
+    for (const auto& state : states) {
+        transitions[state] = {};
+    }
+    
+    // Строим цепочку по первому символу алфавита (гарантирует достижимость всех состояний)
+    for (int i = 0; i < states.size() - 1; ++i) {
+        transitions[states[i]][alphabet[0]] = states[i + 1];
+    }
+}
+
+
+int DFABuilder::computeCapacity(const string& mode){
+    int capacity = states.size() * alphabet.size();
     if (mode == "sparse" && capacity % 2 != 0) {
         throw invalid_argument("Для sparse режима number_of_states*|Sigma| должно быть чётным");
     }
     int target_m = (mode == "full") ? capacity : capacity / 2;
-    if (target_m < number_of_states - 1) {
+    if (target_m < states.size() - 1) {
         throw invalid_argument("Целевая плотность недостаточна для достижимости всех состояний");
     }
+    return target_m;
+}
 
-    // 5. Формируем список доступных ячеек (state, symbol), в которых ещё нет перехода
+
+vector<pair<string, string>> DFABuilder::computeAvailableKeys(int seed){
     vector<pair<string, string>> available_keys;
     for (const auto& state : states) {
         for (const auto& sym : alphabet) {
@@ -215,25 +248,26 @@ DFABuilder& DFABuilder::generatedDFA(int number_of_states, int alphabet_size, co
         }
     }
 
-    // 6. Перемешиваем доступные ячейки
+    // Перемешиваем доступные ячейки
+    mt19937 rng(seed); // Генератор случайных чисел с фиксированным seed
     shuffle(available_keys.begin(), available_keys.end(), rng);
 
-    // 7. Добавляем недостающие переходы до target_m
-    int current_count = number_of_states - 1;  // уже есть цепочка
-    int to_add = target_m - current_count;
-    uniform_int_distribution<> dist(0, number_of_states - 1);
+    return available_keys;
+}
+
+
+void DFABuilder::addTransitionsToCapacity(vector<pair<string, string>> available_keys, int capacity, int seed){
+    mt19937 rng(seed); // Генератор случайных чисел с фиксированным seed
+    int current_count = states.size() - 1;  // уже есть цепочка
+    int to_add = capacity - current_count;
+    uniform_int_distribution<> dist(0, states.size() - 1);
     for (int i = 0; i < to_add && i < (int)available_keys.size(); ++i) {
         const auto& key = available_keys[i];
         string target_state = states[dist(rng)];
         transitions[key.first][key.second] = target_state;
     }
-
-    // 8. Начальное и финальные состояния
-    start_state = states[0];
-    permitted_states = {states[number_of_states - 1]};  // только последнее состояние
-
-    return *this;
 }
+
 
 DFABuilder& DFABuilder::withComponents( string start_state, 
                             vector<string> states, 

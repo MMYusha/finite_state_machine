@@ -82,6 +82,13 @@ class DFABuilder {
         void readStartState(ifstream& file);
         void readAlphabet(ifstream& file);
         void readStatesAndTransitions(ifstream& file);
+        
+        void generateStates(int number_of_states);
+        void generateAlphabet(int alphabet_size);
+        void generateTransitions();
+        int computeCapacity(const string& mode);
+        vector<pair<string, string>> computeAvailableKeys(int seed);
+        void addTransitionsToCapacity(vector<pair<string, string>> available_keys, int capacity, int seed);
 
     public:
         DFABuilder& withCSV(const std::string& filename); // Чтение CSV
