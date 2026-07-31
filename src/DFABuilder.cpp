@@ -19,81 +19,153 @@ using namespace std;
 
 namespace func_DFA{
 
+// Создание полей класса DFABuilder через CSV
 DFABuilder& DFABuilder::withCSV(const string& filename){
-    // Вспомогательные структуры для чтения
-    string token;
-    string Line;
-
+    // Проверка открытия файла
     ifstream file(filename);
     if (!file.is_open()) {
         throw runtime_error("Не удалось открыть файл!");
     }
 
+    // Чтение файла
+    readStringTransition(file);     // запись string_transition
+    readPermittedStates(file);      // запись permitted_states
+    readStartState(file);           // запись start_state
+    readAlphabet(file);             // запись alphabet
+    readStatesAndTransitions(file); // запись states и transitions
+    
+    return *this;
+};
 
-    getline(file, Line);
+//=====================================================================
+// Создание поля string_transition через CSV
+void DFABuilder::readStringTransition(ifstream& file){
+    // Вспомогательные структуры для чтения
+    string token;
+    string Line;
+
+    // Проверка чтения строки
+    if (!getline(file, Line)) {
+        throw std::runtime_error("Не удалось прочитать строку с переходом");
+    }
+    
+    // Чтение строки и запись
     stringstream ss1(Line);
     bool first = true;
     while (getline(ss1, token,';')){
-        if (token == "") break;
-        if (!first) string_transition.push_back(token);
+        if (token.empty()) break; // если токен пустой, то достигнут конец содержимого строки
+        if (!first) string_transition.push_back(token); // пропуск заголовка строки в CSV
         first = false;
     }
+}
 
-    getline(file, Line);
+
+// Создание поля permitted_states через CSV
+void DFABuilder::readPermittedStates(ifstream& file){
+    // Вспомогательные структуры для чтения
+    string token;
+    string Line;
+
+    // Проверка чтения строки
+    if (!getline(file, Line)) {
+        throw std::runtime_error("Не удалось прочитать строку с допустимыми состояниями");
+    }
+    
+    // Чтение строки и запись
     stringstream ss2(Line);
-    first = true;
+    bool first = true;
     while (getline(ss2, token,';')){
-        if (token == "") break;
-        if (!first) permitted_states.push_back(token);
+        if (token.empty()) break;   // если токен пустой, то достигнут конец содержимого строки
+        if (!first) permitted_states.push_back(token); // пропуск заголовка строки в CSV
         first = false;
     }
+}
 
-    getline(file, Line);
+
+// Создание поля start_state через CSV
+void DFABuilder::readStartState(ifstream& file){
+    // Вспомогательные структуры для чтения
+    string token;
+    string Line;
+
+    // Проверка чтения строки
+    if (!getline(file, Line)) {
+        throw std::runtime_error("Не удалось прочитать строку с начальным состоянием");
+    }
+    
+    // Чтение строки и запись
     stringstream ss3(Line);
-    first = true;
+    bool first = true;
     while (getline(ss3, token,';')){
-        if (!first){
+        if (!first){ // пропуск заголовка строки в CSV
             start_state = token;
-            break;
+            break; 
+            // Начальное состояние только одно -> выходим как было получено 1 значение
         }
         first = false;
     }
+}
 
-    getline(file, Line);
-    stringstream ss4(Line);
-    first = true;
-    while (getline(ss4, token,';')){
-        if (token == "") break;
-        if (!first) alphabet.push_back(token);
+
+// Создание поля alphabet через CSV
+void DFABuilder::readAlphabet(ifstream& file){
+    // Вспомогательные структуры для чтения
+    string token;
+    string Line;
+
+    // Проверка чтения строки
+    if (!getline(file, Line)) {
+        throw std::runtime_error("Не удалось прочитать строку с Алфавитом (шапка таблицы переходов)");
+    }
+    
+    // Чтение строки и запись
+    stringstream ss2(Line);
+    bool first = true;
+    while (getline(ss2, token,';')){
+        if (token.empty()) break;   // если токен пустой, то достигнут конец содержимого строки
+        if (!first) alphabet.push_back(token); // пропуск заголовка строки в CSV
         first = false;
     }
+}
 
 
+// Создание полей states и transitions через CSV
+void DFABuilder::readStatesAndTransitions(ifstream& file){
+    // Вспомогательные структуры для чтения
+    string token;
+    string Line;
+   
+    // Чтение строк таблицы переходов до конца файла
+    // Первый столбец таблицы - вектор состояний
     while (getline(file, Line)){
         stringstream ss(Line);
         string current_state;
-        first = true;
+        bool first = true;
         size_t count_alphabet = 0;
-        while (getline(ss, token,';')){
+        while (getline(ss, token,';')){ 
+            // Чтение и запись вектора состояний
             if (first) {
                 current_state = token;
-                states.push_back(token);
+                states.push_back(current_state); 
                 first = false;
             }
+            // Чтение и запись таблицы переходов 
             else{
-                if (count_alphabet < alphabet.size()){
-                    if (!token.empty()){
+                if (count_alphabet < alphabet.size()){ 
+                    // если токен пустой, то перехода по символу алфавита под номером count_alphabet не существует
+                    if (!token.empty()){ 
+                        // запись перехода: "current_state --alphabet[count_alphabet]--> token"
                         transitions[current_state][alphabet[count_alphabet]] = token;  
                     }
-                    ++count_alphabet;
+                    ++count_alphabet; // чтение следующего символа алфавита
                 }
+                // если count_alphabet превышает размер алфавита, то достигнут конец содержимого строки
                 else break;
             }
         }
     }
-    
-    return *this;
-};
+}
+//=======================================================================
 
 DFABuilder& DFABuilder::generatedDFA(int number_of_states, int alphabet_size, const string& mode, int seed) {
     // Проверки

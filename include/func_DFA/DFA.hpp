@@ -77,6 +77,12 @@ class DFABuilder {
         vector<string> string_transition;
         string current_state;
 
+        void readStringTransition(ifstream& file);
+        void readPermittedStates(ifstream& file);
+        void readStartState(ifstream& file);
+        void readAlphabet(ifstream& file);
+        void readStatesAndTransitions(ifstream& file);
+
     public:
         DFABuilder& withCSV(const std::string& filename); // Чтение CSV
         DFABuilder& generatedDFA(int number_of_states, int alphabet_size, const string& mode, int seed); // генерация ДКА с заданными параметрами
