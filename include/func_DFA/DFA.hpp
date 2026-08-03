@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
+#include <queue>
 
 
 using namespace std;
@@ -37,9 +39,29 @@ class DFA5 {
             
         );
 
-        vector<vector<string>> computePartition() const;
+        //vector<vector<string>> computePartition() const;
         DFA5 CreateNewTransitions(const vector<vector<string>>& Partition) const;
-        void transit_string(const vector<string>& str);
+        void transit_string();
+
+        // Используются в print()
+        void printStartState();
+        void printStates();
+        void printPermittedStates();
+        void printAlphabet();
+        void printTransitions();
+        void printStringTransition();
+        void printCurrentState();
+
+        // Используются в exportCSV()
+        void exportStringTransitionCSV(ofstream& file);
+        void exportPermittedStatesCSV(ofstream& file);
+        void exportStartStateCSV(ofstream& file);
+        void exportAlphabetCSV(ofstream& file);
+        void exportTransitionsCSV(ofstream& file);
+
+        bool stateIt();
+        bool SymIt(string symbol);
+        string transition(const string& state, const string& symbol);
 
     public:
         void print();
@@ -60,8 +82,10 @@ class DFA5 {
 
         friend class DFABuilder;
         friend class benchmark;
+        friend class HopcroftMinimizer;
 
         friend class DFATestHelper; // для тестов
+        
 };
 
 class DFABuilder {
@@ -77,12 +101,14 @@ class DFABuilder {
         vector<string> string_transition;
         string current_state;
 
+        // Используются в withCSV()
         void readStringTransition(ifstream& file);
         void readPermittedStates(ifstream& file);
         void readStartState(ifstream& file);
         void readAlphabet(ifstream& file);
         void readStatesAndTransitions(ifstream& file);
         
+        // Используются в generatedDFA()
         void generateStates(int number_of_states);
         void generateAlphabet(int alphabet_size);
         void generateTransitions();
@@ -102,8 +128,55 @@ class DFABuilder {
         DFA5 build() const; // Создание DFA
 };
 
+class HopcroftMinimizer {
+    private:
+        DFA5 dfa;  // копия автомата для минимизации
+
+        // поля, используемые в процессе минимизации
+        unordered_map<string, unordered_map<string, vector<string>>> invariant_transitions;
+        vector<unordered_set<string>> Partition;
+        unordered_map<string, int> StateToClass;
+        queue<pair<int,string>> Queue;
+        unordered_set<std::string> splitter;
+        string symbol;
+        int Class_id;
+        vector<int> Count;
+        vector<int> Twin;
+        vector<int> Involved;
+
+
+        // конструктор, для копирования ДКА в dfa
+        explicit HopcroftMinimizer(const DFA5& input_dfa);
+
+
+        // Основная функция
+        vector<vector<string>> computePartition();
+
+        // Вспомогательные функции для computePartition()
+        void ValidateInput();
+        void removeUnreachableStates();
+        void CreateInvariantTransitions();
+        void InitPartition();
+        void InitClass();
+        void InitQueue();
+        void takeSplitter();
+        void fillInvolved();
+        void split();
+        void moveStatesInPartition();
+        void moveStatesInClass();
+        vector<vector<string>> getResultPartition();
+
+
+
+    
+    friend class DFA5;
+    friend class DFATestHelper;
+
+};
+
 // =================================================================================
 
+// Для тестов
 class DFATestHelper {
     public:
         static vector<vector<string>> getPartition(const DFA5& dfa);

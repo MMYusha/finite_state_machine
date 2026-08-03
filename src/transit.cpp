@@ -1,6 +1,7 @@
 #include <func_DFA/DFA.hpp> // публичные include подключаем как системные
 #include <iostream>   
 #include <vector>   
+#include <unordered_map>
 
 using namespace std;
 
@@ -8,52 +9,79 @@ using namespace std;
 namespace func_DFA{
 
     
-void DFA5::transit_string(const vector<string>& str) {
+void DFA5::transit_string() {
     cout << "\n===== Осуществление перехода ====="<< endl;
-    cout << "Переход из состояния - " << current_state << endl;
-    cout << "По строке - "; 
-    auto flag = true;
-    // Обработка каждого символа
-    for (string ch : str) {   
-        // Вывод строки перехода
-        if (flag) {
-            cout << ch;
-            flag = false;
-        }
-        else{
-            cout << ", " << ch;
-        }
-        
+    printCurrentState();
+    printStringTransition();
+
+    // Обработка каждого символа в строке перехода
+    bool flag = true;
+    for (string symbol : string_transition) {    
         // Ищем таблицу переходов из текущего состояния
-        auto state_it = transitions.find(current_state);
-        if (state_it == transitions.end()) {
-            std::cout << "\n-----------Нет переходов из состояния " << current_state << "---------------\n";
-            break; // автомат застрял
-        }
+        // Проверка, что текущее состояние есть в таблице переходов, т.е. что у из него есть переходы
+        flag = stateIt();
+
         // Ищем переход по текущему символу
-        // Внутренняя таблица – это unordered_map<string, string>
-        auto sym_it = state_it->second.find(ch);
-        if (sym_it == state_it->second.end()) {
-            std::cout << "\n------------Нет перехода по символу '" << ch << "'-------------------\n";
-            break; // переход не определён
-        }
+        // Проверка что существует переход 
+        flag = SymIt(symbol);
 
         // Выполняем переход
-        current_state = sym_it->second;
-        //std::cout << "\nПереход по '" << ch << "' → состояние " << current_state << "\n";
+        if (flag)
+            current_state = transition(current_state, symbol);
+        else break;
     }
-    cout << "\nВ состояние - " << current_state << endl;
+    cout << "Новое ";
+    printCurrentState();
+    
     cout << endl;
 
 }
 
+bool DFA5::stateIt(){  
+    // Ищем таблицу переходов из текущего состояния
+    auto state_it = transitions.find(current_state);
 
-void DFA5::transitInput(const vector<string>& input){
-    transit_string(input);
+    // Проверка, что текущее состояние есть в таблице переходов, т.е. что у из него есть переходы
+    if (state_it == transitions.end()) {
+        // автомат застрял
+        cout << "-----------Нет переходов из состояния " << current_state << "---------------\n";
+        return false;
+    }    
+
+    return true;
 }
 
+bool DFA5::SymIt(string symbol){  
+    // Ищем переход по текущему символу
+    // Внутренняя таблица – это unordered_map<string, string>
+    auto state_it = transitions.find(current_state);
+    auto sym_it = state_it->second.find(symbol);
+    
+    if (sym_it == state_it->second.end()) {
+        // переход не определён
+        cout << "\n------------Нет перехода по символу '" << symbol << "'-------------------\n";
+        return false;
+    } 
+
+    return true;
+}
+
+
+string DFA5::transition(const string& state, const string& symbol){
+    string NewState = transitions[state][symbol];
+
+    return NewState;
+}
+
+
+void DFA5::transitInput(const vector<string>& input){
+    string_transition = input;
+    transit_string();
+}
+
+
 void DFA5::transitFromCSV(){
-    transit_string(string_transition);
+    transit_string();
 }
 
 }

@@ -75,7 +75,7 @@ void benchmark::run_benchmark() {
                 auto dfa = DFABuilder{}.generatedDFA(number_of_states, alphabet_size, mode, seed + rep).build();
                 
                 auto start = high_resolution_clock::now();
-                auto Partition = dfa.computePartition();
+                auto Partition =  DFATestHelper::getPartition(dfa);
                 auto end = high_resolution_clock::now();
 
                 duration<double, milli> elapsed = end - start;
