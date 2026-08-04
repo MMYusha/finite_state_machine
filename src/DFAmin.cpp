@@ -59,16 +59,16 @@ void HopcroftMinimizer::ValidateInput(){
 
     // 5) Входные данные не пустые
     if (alphabet.empty()) {
-        throw std::invalid_argument("Алфавит не может быть пустым");
+        throw invalid_argument("Алфавит не может быть пустым");
     }
     if (states.empty()) {
-        throw std::invalid_argument("Множество состояний не может быть пустым");
+        throw invalid_argument("Множество состояний не может быть пустым");
     }
     if (permitted_states.empty()) {
-        throw std::invalid_argument("Множество допускающих состояний не может быть пустым");
+        throw invalid_argument("Множество допускающих состояний не может быть пустым");
     }
     if (transitions.empty()) {
-        throw std::invalid_argument("Таблица переходов не может быть пустой");
+        throw invalid_argument("Таблица переходов не может быть пустой");
     }
 
 
@@ -76,68 +76,98 @@ void HopcroftMinimizer::ValidateInput(){
 }
 
 
+unordered_set<string> HopcroftMinimizer::findReachableStates() {
+    // Выполняет BFS для поиска всех состояний, достижимых из начального
+    unordered_set<string> reachableStates;
+    queue<string> bfs;
+    bfs.push(dfa.getStartState());
+    reachableStates.insert(dfa.getStartState());
+
+    while (!bfs.empty()) {
+        string cur = bfs.front();
+        bfs.pop();
+        auto it = dfa.getTransitions().find(cur);
+        if (it != dfa.getTransitions().end()) {
+            for (const auto& symPair : it->second) {
+                const string& next = symPair.second;
+                if (reachableStates.find(next) == reachableStates.end()) {
+                    reachableStates.insert(next);
+                    bfs.push(next);
+                }
+            }
+        }
+    }
+    return reachableStates;
+}
+
+
+void HopcroftMinimizer::buildReachableStates(
+    const unordered_set<string>& reachableStates,
+    vector<string>& newStates){
+    // Формирует новые множества состояний, переходов и допускающих на основе достижимых состояний
+    for (const string& state : dfa.getStates()) {
+        if (reachableStates.find(state) != reachableStates.end()) {
+            newStates.push_back(state);
+        }
+    }
+}
+
+
+void HopcroftMinimizer::buildReachableTransitions(
+    const unordered_set<string>& reachableStates,
+    unordered_map<string, unordered_map<string, string>>& newTransitions){
+    // Формирует новые множества состояний, переходов и допускающих на основе достижимых состояний
+    for (const string& state : dfa.getStates()) {
+        if (reachableStates.find(state) != reachableStates.end()) {
+            auto it = dfa.getTransitions().find(state);
+            if (it != dfa.getTransitions().end()) {
+                newTransitions[state] = it->second;
+            }
+        }
+    }
+}
+
+
+void HopcroftMinimizer::buildReachablePermittedStates(
+    const unordered_set<string>& reachableStates,
+    vector<string>& newPermittedStates){
+    for (const string& state : dfa.getPermittedStates()) {
+        if (reachableStates.find(state) != reachableStates.end()) {
+            newPermittedStates.push_back(state);
+        }
+    }
+}
+
+
 void HopcroftMinimizer::removeUnreachableStates(){
     // ----- УДАЛЕНИЕ НЕДОСТИЖИМЫХ СОСТОЯНИЙ -----
-    // Создаём изменяемые копии
-    string start_state = dfa.getStartState();
-    vector<string> localStates = dfa.getStates();
-    vector<string> local_permitted_states = dfa.getPermittedStates();
-    unordered_map<string, unordered_map<string, string>> localTransitions = dfa.getTransitions();
 
-    if (!localStates.empty()) {
-        unordered_set<string> reachable;
-        queue<string> bfs;
-        bfs.push(start_state);
-        reachable.insert(start_state);
+    auto reachableStates = findReachableStates(); // Поиск всех состояний, достижимых из начального
+    
+    // Формируем новые множества
+    vector<string> newStates;
+    unordered_map<string, unordered_map<string, string>> newTransitions;
+    vector<string> new_permitted_states;
 
-        while (!bfs.empty()) {
-            string cur = bfs.front();
-            bfs.pop();
-            auto it = localTransitions.find(cur);
-            if (it != localTransitions.end()) {
-                for (const auto& symPair : it->second) {
-                    const string& next = symPair.second;
-                    if (reachable.find(next) == reachable.end()) {
-                        reachable.insert(next);
-                        bfs.push(next);
-                    }
-                }
-            }
-        }
+    buildReachableStates(reachableStates, newStates);
+    buildReachableTransitions(reachableStates, newTransitions);
+    buildReachablePermittedStates(reachableStates, new_permitted_states);
 
-        // Формируем новые множества
-        vector<string> newStates;
-        unordered_map<string, unordered_map<string, string>> newTransitions;
-        for (const string& state : localStates) {
-            if (reachable.find(state) != reachable.end()) {
-                newStates.push_back(state);
-                auto it = localTransitions.find(state);
-                if (it != localTransitions.end()) {
-                    newTransitions[state] = it->second;
-                }
-            }
-        }
-
-        vector<string> new_permitted_states;
-        for (const string& state : local_permitted_states) {
-            if (reachable.find(state) != reachable.end()) {
-                new_permitted_states.push_back(state);
-            }
-        }
-
-        if (newStates.empty()) {
-            throw runtime_error("После удаления недостижимых состояний не осталось ни одного состояния");
-        }
-
-        dfa = DFA5(dfa.getStartState(),
-                    newStates,
-                    new_permitted_states,
-                    dfa.getAlphabet(),          //не меняется
-                    newTransitions,
-                    dfa.getStringTransition(),  //не меняется
-                    dfa.getCurrentState()        //не меняется
-                    );
+    // Проверка, что есть хотя бы 1 достижимое состояние
+    if (newStates.empty()) {
+        throw runtime_error("После удаления недостижимых состояний не осталось ни одного состояния");
     }
+
+    // Обновление dfa - Присваивает полю dfa новый автомат, построенный из переданных данных
+    dfa = DFA5(dfa.getStartState(),         //не меняется
+                newStates,
+                new_permitted_states,
+                dfa.getAlphabet(),          //не меняется
+                newTransitions,
+                dfa.getStringTransition(),  //не меняется
+                dfa.getCurrentState()       //не меняется
+                );
+    
 }
 
 
@@ -155,7 +185,7 @@ void HopcroftMinimizer::CreateInvariantTransitions(){
 
 
 void HopcroftMinimizer::InitPartition(){
-    //P←{permitted_states, Q∖F}
+    //P <- {permitted_states, Q∖F}
 
     //добавление в разбиение Partition допускающих состояний
     unordered_set<string> permitted_states_set(dfa.getPermittedStates().begin(), dfa.getPermittedStates().end()); //хэш-таблица для быстрого поиска
@@ -163,6 +193,7 @@ void HopcroftMinimizer::InitPartition(){
     
     // добавление в разбиение Partition недопускающих состояний
     //unordered_map<string, int> StateToClass; // классы разбиения StateToClass
+    // Формирование вектора недопускающих состояний non_permitted_states
     vector<string> non_permitted_states;
     for (string state : dfa.getStates()){
         if (permitted_states_set.find(state) == permitted_states_set.end()){
@@ -171,6 +202,7 @@ void HopcroftMinimizer::InitPartition(){
     }
 
     if (!non_permitted_states.empty()) {
+        // добавление в разбиение Partition недопускающих состояний non_permitted_states
         Partition.push_back(unordered_set<string>(non_permitted_states.begin(), non_permitted_states.end()));
     }
 }
@@ -276,10 +308,10 @@ vector<vector<string>> HopcroftMinimizer::getResultPartition(){
     // Преобразование результата в vector<vector<string>> для возврата + сортировка состояний внутри классов
     vector<vector<string>> resultPartition;
     resultPartition.reserve(Partition.size());
-    for (auto cls : Partition) {
+    for (auto cls : Partition) { // Преобразование результата в vector<vector<string>>
         resultPartition.push_back(vector<string>(cls.begin(), cls.end()));
     }
-    for (auto& vec : resultPartition) {
+    for (auto& vec : resultPartition) { //сортировка состояний внутри классов
         sort(vec.begin(), vec.end());
     }
     return resultPartition;
@@ -318,69 +350,99 @@ vector<vector<string>> HopcroftMinimizer::computePartition() {
 }
 
 
-DFA5 DFA5::CreateNewTransitions(const vector<vector<string>>& Partition) const {
-
-    // отображение "старое состояние -> имя класса" 
-    unordered_map<string, string> stateToNewState;
+vector<string> DFA5::CreateNewStates(const vector<vector<string>>& Partition) const{
     vector<string> newStates;
-
     for (auto cls : Partition) {
-        // Формируем имя класса как сумму состояний через '+'
-        string className;
-        for (size_t i = 0; i < cls.size(); ++i) {
-            if (i > 0) className += "+";
-            className += cls[i];
-        }
-        newStates.push_back(className);
+        // Формируем имя нового состояния (класса) как сумму состояний в классе через '+'
+        auto stateName = CreateStateName(cls);
+        newStates.push_back(stateName);
+    }
+    return newStates;
+}
+
+string DFA5::CreateStateName(const vector<string>& cls) const{
+    // Формируем имя нового состояния (класса) как сумму состояний в классе через '+'
+    string stateName;
+    for (size_t i = 0; i < cls.size(); ++i) {
+        if (i > 0) stateName += "+";
+            stateName += cls[i];
+    }
+    return stateName;
+}
+
+
+unordered_map<string, string> DFA5::CreateStateToNewState(const vector<vector<string>>& Partition) const{
+    // отображение "старое состояние -> имя нового состояния (класса)" 
+    unordered_map<string, string> stateToNewState;
+    for (auto cls : Partition) {
         for (string state : cls) {
-            stateToNewState[state] = className;   // запоминаем соответствие
+            auto stateName = CreateStateName(cls);
+            stateToNewState[state] = stateName;   // запоминаем соответствие
         }
     }
+    return stateToNewState;
+}
 
-    // построение новых переходов 
+
+unordered_map<string, unordered_map<string, string>> DFA5::CreateNewTransitions(const vector<vector<string>>& Partition, 
+                                                                                const unordered_map<string, string>& stateToNewState) const{
     unordered_map<string, unordered_map<string, string>> newTransitions;
-
     for (auto cls : Partition) {
-        string className = stateToNewState[cls[0]]; // имя текущего класса
+        string className = stateToNewState.at(cls.at(0)); // имя текущего класса
 
         unordered_map<string, string> trans; // переходы для этого класса
         for (string sym : alphabet) {
             // Берем переход из любого состояния класса (возьмём первое)
-            string oldTarget = transitions.at(cls[0]).at(sym);
+            string oldTarget = transitions.at(cls.at(0)).at(sym);
             // Находим класс, в который попадаем
-            string newTarget = stateToNewState[oldTarget];
+            string newTarget = stateToNewState.at(oldTarget);
             trans[sym] = newTarget;
         }
         newTransitions[className] = trans;
     }
+    return newTransitions;
+}
 
-    
-    // Обновление начального состояния
-    auto new_start_state = stateToNewState[start_state];
-    
-    // Обновление допустимых состояний
-    vector<string> newPermitted;
+
+vector<string> DFA5::CreateNewPermittedStates(const unordered_map<string, string>& stateToNewState) const{
+    vector<string> newPermittedStates;
     for (string st : permitted_states) {
         auto it = stateToNewState.find(st);
         if (it != stateToNewState.end()) {
             // добавляем только уникальные классы
-            if (find(newPermitted.begin(), newPermitted.end(), it->second) == newPermitted.end())
-                newPermitted.push_back(it->second);
+            if (find(newPermittedStates.begin(), newPermittedStates.end(), it->second) == newPermittedStates.end())
+                newPermittedStates.push_back(it->second);
         }
     }
+    return newPermittedStates;
+}
 
-    // Обновление текущего состояния
-    auto new_current_state = stateToNewState[current_state];
 
 
-    return DFA5(new_start_state, newStates, newPermitted, alphabet, newTransitions, string_transition, new_current_state);
+DFA5 DFA5::CreateNewDFAwithPartition(const vector<vector<string>>& Partition) const {
+    // Создание нового ДКА по классам разбиения
+
+    auto newStates = CreateNewStates(Partition);            // Формируем имя состояния как сумму состояний в классе через '+'
+
+    auto stateToNewState = CreateStateToNewState(Partition);// отображение "старое состояние -> имя нового состояния (класса)" 
+
+    auto newTransitions = CreateNewTransitions(Partition, stateToNewState);// построение новых переходов 
+
+    auto new_start_state = stateToNewState[start_state];    // Обновление начального состояния
+    
+    auto newPermittedStates = CreateNewPermittedStates(stateToNewState); // Обновление допустимых состояний
+    
+    auto new_current_state = stateToNewState[current_state]; // Обновление текущего состояния
+
+
+    return DFA5(new_start_state, newStates, newPermittedStates, alphabet, newTransitions, string_transition, new_current_state);
 }
 
 
 void DFA5::minimize(){
     HopcroftMinimizer minimizer(*this);
     auto Partition = minimizer.computePartition();
-    auto minimizedDFA = CreateNewTransitions(Partition);
+    auto minimizedDFA = CreateNewDFAwithPartition(Partition);
     *this = minimizedDFA; 
     //cout << "\n========= Минимизация ========" << endl;
 }

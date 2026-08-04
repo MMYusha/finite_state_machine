@@ -15,7 +15,7 @@ vector<vector<string>> DFATestHelper::getPartition(const DFA5& dfa){
 }
 
 DFA5 DFATestHelper::getNewDFAwithPartition(const DFA5& dfa, const vector<vector<string>>& Partition){
-    return dfa.CreateNewTransitions(Partition);
+    return dfa.CreateNewDFAwithPartition(Partition);
 }
 
 }

@@ -39,8 +39,17 @@ class DFA5 {
             
         );
 
-        //vector<vector<string>> computePartition() const;
-        DFA5 CreateNewTransitions(const vector<vector<string>>& Partition) const;
+        DFA5 CreateNewDFAwithPartition(const vector<vector<string>>& Partition) const;
+
+        vector<string> CreateNewStates(const vector<vector<string>>& Partition) const;
+        string CreateStateName(const vector<string>& cls) const;
+        unordered_map<string, string> CreateStateToNewState(const vector<vector<string>>& Partition) const;
+        unordered_map<string, unordered_map<string, string>> CreateNewTransitions(const vector<vector<string>>& Partition, 
+                                                                                  const unordered_map<string, string>& stateToNewState) const;
+        vector<string> CreateNewPermittedStates(const unordered_map<string, string>& stateToNewState) const;
+
+
+
         void transit_string();
 
         // Используются в print()
@@ -117,8 +126,11 @@ class DFABuilder {
         void addTransitionsToCapacity(vector<pair<string, string>> available_keys, int capacity, int seed);
 
     public:
-        DFABuilder& withCSV(const std::string& filename); // Чтение CSV
-        DFABuilder& generatedDFA(int number_of_states, int alphabet_size, const string& mode, int seed); // генерация ДКА с заданными параметрами
+        DFABuilder& withCSV(const string& filename); // Чтение CSV
+        DFABuilder& generatedDFA(   int number_of_states, 
+                                    int alphabet_size, 
+                                    const string& mode, 
+                                    int seed); // генерация ДКА с заданными параметрами
         DFABuilder& withComponents( string start_state, 
                                     vector<string> states, 
                                     vector<string> permitted_states, 
@@ -137,7 +149,7 @@ class HopcroftMinimizer {
         vector<unordered_set<string>> Partition;
         unordered_map<string, int> StateToClass;
         queue<pair<int,string>> Queue;
-        unordered_set<std::string> splitter;
+        unordered_set<string> splitter;
         string symbol;
         int Class_id;
         vector<int> Count;
@@ -154,7 +166,16 @@ class HopcroftMinimizer {
 
         // Вспомогательные функции для computePartition()
         void ValidateInput();
+        
         void removeUnreachableStates();
+        unordered_set<string> findReachableStates();
+        void buildReachableStates(  const unordered_set<string>& reachableStates,
+                                    vector<string>& newStates);
+        void buildReachableTransitions( const unordered_set<string>& reachableStates,
+                                        unordered_map<string, unordered_map<string, string>>& newTransitions);
+        void buildReachablePermittedStates( const unordered_set<string>& reachableStates,
+                                            vector<string>& newPermittedStates);
+
         void CreateInvariantTransitions();
         void InitPartition();
         void InitClass();
@@ -180,7 +201,9 @@ class HopcroftMinimizer {
 class DFATestHelper {
     public:
         static vector<vector<string>> getPartition(const DFA5& dfa);
-        static DFA5 getNewDFAwithPartition(const DFA5& dfa, const vector<vector<string>>& Partition);
+        static DFA5 getNewDFAwithPartition(
+            const DFA5& dfa, 
+            const vector<vector<string>>& Partition);
     };
 
 // =================================================================================
@@ -216,7 +239,7 @@ class benchmark{
         void run_benchmark();
         void print();
 
-        friend class benchmarkBuilder;
+    friend class benchmarkBuilder;
 };
 
 
