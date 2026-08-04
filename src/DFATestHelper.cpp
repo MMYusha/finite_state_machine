@@ -9,11 +9,13 @@ using namespace std;
 namespace func_DFA{
 
 vector<vector<string>> DFATestHelper::getPartition(const DFA5& dfa){
-    return dfa.computePartition();   
+    HopcroftMinimizer minimizer(dfa);
+    auto Partition = minimizer.computePartition();
+    return Partition;   
 }
 
 DFA5 DFATestHelper::getNewDFAwithPartition(const DFA5& dfa, const vector<vector<string>>& Partition){
-    return dfa.CreateNewTransitions(Partition);
+    return dfa.CreateNewDFAwithPartition(Partition);
 }
 
 }
