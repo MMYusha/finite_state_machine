@@ -1,13 +1,9 @@
 #include <func_DFA/DFA.hpp>  
 
-#include <iostream>
-#include <vector>
-#include <string>
-
-
-using namespace std;
 
 namespace func_DFA{
+using std::string;
+using std::vector;
 
 benchmarkBuilder& benchmarkBuilder::withInput(int min_states, int max_states, int intermediate_number,
             int seed, int repetitions, string mode,  vector<int> vector_number_of_states, vector<int> vector_alphabet_size){

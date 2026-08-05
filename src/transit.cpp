@@ -1,13 +1,12 @@
 #include <func_DFA/DFA.hpp> // публичные include подключаем как системные
+
 #include <iostream>   
-#include <vector>   
-#include <unordered_map>
-
-using namespace std;
-
 
 namespace func_DFA{
-
+using std::vector;
+using std::string;
+using std::cout; 
+using std::endl; 
     
 void DFA5::transit_string() {
     cout << "\n===== Осуществление перехода ====="<< endl;

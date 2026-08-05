@@ -1,23 +1,27 @@
 #include <func_DFA/DFA.hpp> // публичные include подключаем как системные
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>   // для unordered_set
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
-#include <iostream>
-
-#include <queue>
-#include <utility>   // для std::pair
-#include <algorithm>   // для std::sort
-
-#include <random>
 
 
-using namespace std;
+#include <fstream> // getline
+#include <sstream> // std::stringstream
+
+#include <algorithm>   // std::shuffle
+
+#include <random> // std::mt19937
+
+
+
 
 namespace func_DFA{
+using std::string;
+using std::vector;
+using std::unordered_map;
+using std::ifstream;
+using std::stringstream;
+using std::runtime_error;
+using std::invalid_argument;
+using std::pair;
+using std::mt19937;
+using std::to_string;
 
 // Создание полей класса DFABuilder через CSV
 DFABuilder& DFABuilder::withCSV(const string& filename){
@@ -218,7 +222,7 @@ void DFABuilder::generateTransitions(){
     }
     
     // Строим цепочку по первому символу алфавита (гарантирует достижимость всех состояний)
-    for (int i = 0; i < states.size() - 1; ++i) {
+    for (size_t i = 0; i < states.size() - 1; ++i) {
         transitions[states[i]][alphabet[0]] = states[i + 1];
     }
 }
@@ -230,7 +234,7 @@ int DFABuilder::computeCapacity(const string& mode){
         throw invalid_argument("Для sparse режима number_of_states*|Sigma| должно быть чётным");
     }
     int target_m = (mode == "full") ? capacity : capacity / 2;
-    if (target_m < states.size() - 1) {
+    if (target_m < static_cast<int>(states.size()) - 1) {
         throw invalid_argument("Целевая плотность недостаточна для достижимости всех состояний");
     }
     return target_m;
@@ -250,7 +254,7 @@ vector<pair<string, string>> DFABuilder::computeAvailableKeys(int seed){
 
     // Перемешиваем доступные ячейки
     mt19937 rng(seed); // Генератор случайных чисел с фиксированным seed
-    shuffle(available_keys.begin(), available_keys.end(), rng);
+    std::shuffle(available_keys.begin(), available_keys.end(), rng);
 
     return available_keys;
 }
@@ -260,7 +264,7 @@ void DFABuilder::addTransitionsToCapacity(vector<pair<string, string>> available
     mt19937 rng(seed); // Генератор случайных чисел с фиксированным seed
     int current_count = states.size() - 1;  // уже есть цепочка
     int to_add = capacity - current_count;
-    uniform_int_distribution<> dist(0, states.size() - 1);
+    std::uniform_int_distribution<> dist(0, states.size() - 1);
     for (int i = 0; i < to_add && i < (int)available_keys.size(); ++i) {
         const auto& key = available_keys[i];
         string target_state = states[dist(rng)];

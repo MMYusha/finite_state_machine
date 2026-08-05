@@ -1,21 +1,21 @@
 #include <func_DFA/DFA.hpp> // публичные include подключаем как системные
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>   // для unordered_set
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
+
 #include <iostream>
 
-#include <queue>
-#include <utility>   // для std::pair
-#include <algorithm>   // для std::sort
+#include <unordered_map>
+#include <fstream>
 
 
-using namespace std;
 
 namespace func_DFA{
+using std::string;
+using std::vector;
+using std::unordered_map;
+using std::ofstream;
+using std::find;
+using std::cout;
+using std::endl;
+
 
 DFA5::DFA5(
     const string& start,
@@ -122,7 +122,7 @@ void DFA5::exportCSV(const string& filename) {
     // Открытие файла для записи
     ofstream file(filename);
     if (!file.is_open()) {
-        throw runtime_error("Не удалось открыть файл для записи!");
+        throw std::runtime_error("Не удалось открыть файл для записи!");
     }
 
     // Чтобы при открытии CSV файла в Excel и т.д. нормально отображались русский буквы

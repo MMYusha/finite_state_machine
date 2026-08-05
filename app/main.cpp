@@ -1,13 +1,18 @@
-#include <cstdio>  // для printf
 #include <iostream>
-#include <unordered_map>
 #include <string>
 #include <vector>
 
 #include <func_DFA/DFA.hpp>
 
-using namespace std;
-using namespace func_DFA;
+using std::vector;
+using std::string;
+using std::cin;
+using std::cout;
+
+using func_DFA::DFA5;
+using func_DFA::DFABuilder;
+using func_DFA::benchmark;
+using func_DFA::benchmarkBuilder;
 
 
 int main() {

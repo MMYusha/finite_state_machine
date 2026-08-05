@@ -1,16 +1,19 @@
-#include <func_DFA/DFA.hpp> // публичные include подключаем как системные
-#include <iostream>   // для std::cout
-#include <vector> 
-#include <unordered_map>
-#include <unordered_set>   // для unordered_set
+#include <func_DFA/DFA.hpp> 
 
-#include <queue>
-#include <utility>   // для std::pair
+#include <iostream>   
+
+#include <queue> //для bfs
+#include <utility>   
 #include <algorithm>   // для std::sort
 
-using namespace std;
 
 namespace func_DFA{
+using std::vector;
+using std::string; 
+using std::unordered_map;
+using std::unordered_set;
+using std::find;
+using std::invalid_argument;
 
 HopcroftMinimizer::HopcroftMinimizer(const DFA5& input_dfa)
     : dfa(input_dfa) {}
@@ -79,7 +82,7 @@ void HopcroftMinimizer::ValidateInput(){
 unordered_set<string> HopcroftMinimizer::findReachableStates() {
     // Выполняет BFS для поиска всех состояний, достижимых из начального
     unordered_set<string> reachableStates;
-    queue<string> bfs;
+    std::queue<string> bfs;
     bfs.push(dfa.getStartState());
     reachableStates.insert(dfa.getStartState());
 
@@ -155,7 +158,7 @@ void HopcroftMinimizer::removeUnreachableStates(){
 
     // Проверка, что есть хотя бы 1 достижимое состояние
     if (newStates.empty()) {
-        throw runtime_error("После удаления недостижимых состояний не осталось ни одного состояния");
+        throw std::runtime_error("После удаления недостижимых состояний не осталось ни одного состояния");
     }
 
     // Обновление dfa - Присваивает полю dfa новый автомат, построенный из переданных данных
@@ -312,7 +315,7 @@ vector<vector<string>> HopcroftMinimizer::getResultPartition(){
         resultPartition.push_back(vector<string>(cls.begin(), cls.end()));
     }
     for (auto& vec : resultPartition) { //сортировка состояний внутри классов
-        sort(vec.begin(), vec.end());
+        std::sort(vec.begin(), vec.end());
     }
     return resultPartition;
 }
@@ -444,7 +447,6 @@ void DFA5::minimize(){
     auto Partition = minimizer.computePartition();
     auto minimizedDFA = CreateNewDFAwithPartition(Partition);
     *this = minimizedDFA; 
-    //cout << "\n========= Минимизация ========" << endl;
 }
 
 }

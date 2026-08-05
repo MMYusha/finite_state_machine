@@ -7,46 +7,43 @@
 #include <unordered_set>
 #include <queue>
 
-
-using namespace std;
-
 namespace func_DFA {
 
 class DFA5 {
     private:
         // Поля пятикортежа 
-        string start_state;   
-        vector<string> states; 
-        vector<string> permitted_states;
-        vector<string> alphabet;
-        unordered_map<string, unordered_map<string, string>> transitions;
+        std::string start_state;   
+        std::vector<std::string> states; 
+        std::vector<std::string> permitted_states;
+        std::vector<std::string> alphabet;
+        std::unordered_map<std::string, std::unordered_map<std::string, std::string>> transitions;
 
         // Дополнительные поля
-        vector<string> string_transition;
-        string current_state;
+        std::vector<std::string> string_transition;
+        std::string current_state;
 
 
         // Приватный конструктор
         DFA5(
-            const string& start,
-            const vector<string>& st,
-            const vector<string>& perm,
-            const vector<string>& alph,
-            const unordered_map<string, unordered_map<string, string>>& trans,
+            const std::string& start,
+            const std::vector<std::string>& st,
+            const std::vector<std::string>& perm,
+            const std::vector<std::string>& alph,
+            const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& trans,
 
-            const vector<string>& str_transition,
-            const string current
+            const std::vector<std::string>& str_transition,
+            const std::string current
             
         );
 
-        DFA5 CreateNewDFAwithPartition(const vector<vector<string>>& Partition) const;
+        DFA5 CreateNewDFAwithPartition(const std::vector<std::vector<std::string>>& Partition) const;
 
-        vector<string> CreateNewStates(const vector<vector<string>>& Partition) const;
-        string CreateStateName(const vector<string>& cls) const;
-        unordered_map<string, string> CreateStateToNewState(const vector<vector<string>>& Partition) const;
-        unordered_map<string, unordered_map<string, string>> CreateNewTransitions(const vector<vector<string>>& Partition, 
-                                                                                  const unordered_map<string, string>& stateToNewState) const;
-        vector<string> CreateNewPermittedStates(const unordered_map<string, string>& stateToNewState) const;
+        std::vector<std::string> CreateNewStates(const std::vector<std::vector<std::string>>& Partition) const;
+        std::string CreateStateName(const std::vector<std::string>& cls) const;
+        std::unordered_map<std::string, std::string> CreateStateToNewState(const std::vector<std::vector<std::string>>& Partition) const;
+        std::unordered_map<std::string, std::unordered_map<std::string, std::string>> CreateNewTransitions(const std::vector<std::vector<std::string>>& Partition, 
+                                                                                  const std::unordered_map<std::string, std::string>& stateToNewState) const;
+        std::vector<std::string> CreateNewPermittedStates(const std::unordered_map<std::string, std::string>& stateToNewState) const;
 
 
 
@@ -62,32 +59,32 @@ class DFA5 {
         void printCurrentState();
 
         // Используются в exportCSV()
-        void exportStringTransitionCSV(ofstream& file);
-        void exportPermittedStatesCSV(ofstream& file);
-        void exportStartStateCSV(ofstream& file);
-        void exportAlphabetCSV(ofstream& file);
-        void exportTransitionsCSV(ofstream& file);
+        void exportStringTransitionCSV(std::ofstream& file);
+        void exportPermittedStatesCSV(std::ofstream& file);
+        void exportStartStateCSV(std::ofstream& file);
+        void exportAlphabetCSV(std::ofstream& file);
+        void exportTransitionsCSV(std::ofstream& file);
 
         bool stateIt();
-        bool SymIt(string symbol);
-        string transition(const string& state, const string& symbol);
+        bool SymIt(std::string symbol);
+        std::string transition(const std::string& state, const std::string& symbol);
 
     public:
         void print();
-        void exportCSV(const string& filename);
+        void exportCSV(const std::string& filename);
         void minimize();
-        void transitInput(const vector<string>& input);
+        void transitInput(const std::vector<std::string>& input);
         void transitFromCSV();
         void resetCurrentState();
 
         //Геттеры
-        const string& getStartState() const;   
-        const vector<string>& getStates() const; 
-        const vector<string>& getPermittedStates() const;
-        const vector<string>& getAlphabet() const;
-        const unordered_map<string, unordered_map<string, string>>& getTransitions() const;
-        const vector<string>& getStringTransition() const;
-        const string& getCurrentState() const;
+        const std::string& getStartState() const;   
+        const std::vector<std::string>& getStates() const; 
+        const std::vector<std::string>& getPermittedStates() const;
+        const std::vector<std::string>& getAlphabet() const;
+        const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& getTransitions() const;
+        const std::vector<std::string>& getStringTransition() const;
+        const std::string& getCurrentState() const;
 
         friend class DFABuilder;
         friend class benchmark;
@@ -100,42 +97,42 @@ class DFA5 {
 class DFABuilder {
     private:
         // Поля пятикортежа 
-        string start_state;   
-        vector<string> states; 
-        vector<string> permitted_states;
-        vector<string> alphabet;
-        unordered_map<string, unordered_map<string, string>> transitions;
+        std::string start_state;   
+        std::vector<std::string> states; 
+        std::vector<std::string> permitted_states;
+        std::vector<std::string> alphabet;
+        std::unordered_map<std::string, std::unordered_map<std::string, std::string>> transitions;
 
         // Дополнительные поля
-        vector<string> string_transition;
-        string current_state;
+        std::vector<std::string> string_transition;
+        std::string current_state;
 
         // Используются в withCSV()
-        void readStringTransition(ifstream& file);
-        void readPermittedStates(ifstream& file);
-        void readStartState(ifstream& file);
-        void readAlphabet(ifstream& file);
-        void readStatesAndTransitions(ifstream& file);
+        void readStringTransition(std::ifstream& file);
+        void readPermittedStates(std::ifstream& file);
+        void readStartState(std::ifstream& file);
+        void readAlphabet(std::ifstream& file);
+        void readStatesAndTransitions(std::ifstream& file);
         
         // Используются в generatedDFA()
         void generateStates(int number_of_states);
         void generateAlphabet(int alphabet_size);
         void generateTransitions();
-        int computeCapacity(const string& mode);
-        vector<pair<string, string>> computeAvailableKeys(int seed);
-        void addTransitionsToCapacity(vector<pair<string, string>> available_keys, int capacity, int seed);
+        int computeCapacity(const std::string& mode);
+        std::vector<std::pair<std::string, std::string>> computeAvailableKeys(int seed);
+        void addTransitionsToCapacity(std::vector<std::pair<std::string, std::string>> available_keys, int capacity, int seed);
 
     public:
-        DFABuilder& withCSV(const string& filename); // Чтение CSV
+        DFABuilder& withCSV(const std::string& filename); // Чтение CSV
         DFABuilder& generatedDFA(   int number_of_states, 
                                     int alphabet_size, 
-                                    const string& mode, 
+                                    const std::string& mode, 
                                     int seed); // генерация ДКА с заданными параметрами
-        DFABuilder& withComponents( string start_state, 
-                                    vector<string> states, 
-                                    vector<string> permitted_states, 
-                                    vector<string> alphabet, 
-                                    unordered_map<string, unordered_map<string, string>> transitions); // создание ДКА из компонент
+        DFABuilder& withComponents( std::string start_state, 
+                                    std::vector<std::string> states, 
+                                    std::vector<std::string> permitted_states, 
+                                    std::vector<std::string> alphabet, 
+                                    std::unordered_map<std::string, std::unordered_map<std::string, std::string>> transitions); // создание ДКА из компонент
 
         DFA5 build() const; // Создание DFA
 };
@@ -145,16 +142,16 @@ class HopcroftMinimizer {
         DFA5 dfa;  // копия автомата для минимизации
 
         // поля, используемые в процессе минимизации
-        unordered_map<string, unordered_map<string, vector<string>>> invariant_transitions;
-        vector<unordered_set<string>> Partition;
-        unordered_map<string, int> StateToClass;
-        queue<pair<int,string>> Queue;
-        unordered_set<string> splitter;
-        string symbol;
+        std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>> invariant_transitions;
+        std::vector<std::unordered_set<std::string>> Partition;
+        std::unordered_map<std::string, int> StateToClass;
+        std::queue<std::pair<int,std::string>> Queue;
+        std::unordered_set<std::string> splitter;
+        std::string symbol;
         int Class_id;
-        vector<int> Count;
-        vector<int> Twin;
-        vector<int> Involved;
+        std::vector<int> Count;
+        std::vector<int> Twin;
+        std::vector<int> Involved;
 
 
         // конструктор, для копирования ДКА в dfa
@@ -162,19 +159,19 @@ class HopcroftMinimizer {
 
 
         // Основная функция
-        vector<vector<string>> computePartition();
+        std::vector<std::vector<std::string>> computePartition();
 
         // Вспомогательные функции для computePartition()
         void ValidateInput();
         
         void removeUnreachableStates();
-        unordered_set<string> findReachableStates();
-        void buildReachableStates(  const unordered_set<string>& reachableStates,
-                                    vector<string>& newStates);
-        void buildReachableTransitions( const unordered_set<string>& reachableStates,
-                                        unordered_map<string, unordered_map<string, string>>& newTransitions);
-        void buildReachablePermittedStates( const unordered_set<string>& reachableStates,
-                                            vector<string>& newPermittedStates);
+        std::unordered_set<std::string> findReachableStates();
+        void buildReachableStates(  const std::unordered_set<std::string>& reachableStates,
+                                    std::vector<std::string>& newStates);
+        void buildReachableTransitions( const std::unordered_set<std::string>& reachableStates,
+                                        std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& newTransitions);
+        void buildReachablePermittedStates( const std::unordered_set<std::string>& reachableStates,
+                                            std::vector<std::string>& newPermittedStates);
 
         void CreateInvariantTransitions();
         void InitPartition();
@@ -185,7 +182,7 @@ class HopcroftMinimizer {
         void split();
         void moveStatesInPartition();
         void moveStatesInClass();
-        vector<vector<string>> getResultPartition();
+        std::vector<std::vector<std::string>> getResultPartition();
 
 
 
@@ -200,19 +197,19 @@ class HopcroftMinimizer {
 // Для тестов
 class DFATestHelper {
     public:
-        static vector<vector<string>> getPartition(const DFA5& dfa);
+        static std::vector<std::vector<std::string>> getPartition(const DFA5& dfa);
         static DFA5 getNewDFAwithPartition(
             const DFA5& dfa, 
-            const vector<vector<string>>& Partition);
+            const std::vector<std::vector<std::string>>& Partition);
     };
 
 // =================================================================================
 
 class benchmark{
     private:
-        vector<int> vector_alphabet_size;
-        vector<int> vector_number_of_states;
-        string mode;
+        std::vector<int> vector_alphabet_size;
+        std::vector<int> vector_number_of_states;
+        std::string mode;
         int repetitions;
         int seed;
 
@@ -223,15 +220,15 @@ class benchmark{
 
         // Приватный конструктор
         benchmark(
-            vector<int> vector_alph_size,
-            vector<int> vector_number_of_st,
-            string mod,
+            std::vector<int> vector_alph_size,
+            std::vector<int> vector_number_of_st,
+            std::string mod,
             int repetit,
             int sed
         );
 
-        void save_benchmark_data(const vector<pair<int, double>>& data, const string& filename);
-        void plot_with_gnuplot(const string& data_file, const string& output_png = "dfa_min_time.png"); 
+        void save_benchmark_data(const std::vector<std::pair<int, double>>& data, const std::string& filename);
+        void plot_with_gnuplot(const std::string& data_file, const std::string& output_png = "dfa_min_time.png"); 
 
 
     public:
@@ -245,15 +242,15 @@ class benchmark{
 
 class benchmarkBuilder {
     private:
-        vector<int> vector_alphabet_size;
-        vector<int> vector_number_of_states;
-        string mode;
+        std::vector<int> vector_alphabet_size;
+        std::vector<int> vector_number_of_states;
+        std::string mode;
         int repetitions;
         int seed;
 
     public:
         benchmarkBuilder& withInput(int min_states, int max_states, int intermediate_number,
-            int seed, int repetitions, string mode,  vector<int> vector_number_of_states, vector<int> vector_alphabet_size);
+            int seed, int repetitions, std::string mode,  std::vector<int> vector_number_of_states, std::vector<int> vector_alphabet_size);
         benchmark build() const;
 };
 
