@@ -80,9 +80,11 @@ cmake -G "MinGW Makefiles" -D CMAKE_CXX_COMPILER=C:/msys64/ucrt64/bin/g++.exe -D
 
 cmake --build .
 
+
 После сборки исполняемый файл приложения:
 
 /build/app/main.exe
+
 
 Запуск тестов:
 
