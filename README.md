@@ -75,24 +75,33 @@ finite_state_machine/
 ## Сборка проекта
 
 cd build
+
 cmake -G "MinGW Makefiles" -D CMAKE_CXX_COMPILER=C:/msys64/ucrt64/bin/g++.exe -D BUILD_TESTS=ON ..
+
 cmake --build .
 
 После сборки исполняемый файл приложения:
+
 /build/app/main.exe
 
 Запуск тестов:
+
 cd build
+
 /build/tests/my_DFA_test.exe
 
 ## Бенчмарк
 
 Результаты сохраняются в папку data/:
+
 dfa_benchmark_data.txt – данные для графика
+
 dfa_min_time.png – график зависимости времени от числа состояний
 
 ## Примечания
 
 Для минимизации требуется хотя бы одно допускающее состояние.
+
 CSV-файл должен соответствовать формату, описанному в тестах (пример: data/input.csv).
+
 Для работы бенчмарка требуется установленный Gnuplot.
