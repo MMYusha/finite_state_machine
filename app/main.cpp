@@ -15,26 +15,26 @@ int main() {
     system("chcp 65001 > nul");  // Для корректного вывода русского языка
 
     // ================= Пример использования ДКА =================
-    auto dfa = DFABuilder{}.withCSV("input.csv").build();  // Чтение ДКА из csv файла
+    auto dfa = DFABuilder{}.withCSV("data/input.csv").build();  // Чтение ДКА из csv файла
     dfa.print();                                           // Вывод ДКА в консоль
     dfa.transitFromCSV();                                  // Переход по строке, прочитанной в CSV
     dfa.resetCurrentState();                               // Сброс ДКА в начальное состояние
     dfa.transitInput({"0", "1", "0", "1"});                // Переход по заданной строке
     dfa.minimize();                                        // Минимизация ДКА
-    dfa.exportCSV("output.csv");                           // Запись нового ДКА в файл
+    dfa.exportCSV("data/output.csv");                           // Запись нового ДКА в файл
 
     // ================= Бенчмарк =================
     // параметры бенчмарка
     vector<int> vector_number_of_states;
     vector<int> vector_alphabet_size = {2};
-    string mode = "full";
-    int repetitions = 1000;
+    string mode = "full"; 
+    int repetitions = 20; 
     int seed = 42;
 
     // массив размеров ДКА
-    int min_states = 512;
+    int min_states = 2;
     int max_states = 1024;
-    int intermediate_number = 1;
+    int intermediate_number = 5;
 
     // создание бенчмарка
     auto bench = benchmarkBuilder{}

@@ -1,32 +1,41 @@
-#include <chrono>   // Для измерения времени выполнения
-#include <fstream>  // для ofstream
-#include <func_DFA/DFA.hpp>
-#include <iostream>
+#include <func_DFA/DFA.hpp>  
 
-namespace func_DFA {
+#include <iostream>
+#include <chrono> // Для измерения времени выполнения
+#include <fstream> // для ofstream
+
+
+
+
+namespace func_DFA{
 using std::cout;
 using std::endl;
-using std::ofstream;
-using std::pair;
-using std::string;
 using std::vector;
+using std::string;
+using std::pair;
+using std::ofstream;
 
 // Для измерения времени выполнения
-using std::milli;
-using std::chrono::duration;
 using std::chrono::high_resolution_clock;
+using std::chrono::duration;
+using std::milli;
 
-benchmark::benchmark(const vector<int> vector_alph_size, const vector<int> vector_number_of_st,
-                     const string mod, const int repetit, const int sed)
-    : vector_alphabet_size(vector_alph_size),
-      vector_number_of_states(vector_number_of_st),
-      mode(mod),
-      repetitions(repetit),
-      seed(sed) {}
+
+
+benchmark::benchmark(
+    const vector<int> vector_alph_size,
+    const vector<int> vector_number_of_st,
+    const string mod,
+    const int repetit,
+    const int sed
+) : vector_alphabet_size(vector_alph_size), vector_number_of_states(vector_number_of_st), 
+    mode(mod), repetitions(repetit), seed(sed) {}
+
 
 // ------------------------------------------------------------
 // Сохранение данных и построение графика
 // ------------------------------------------------------------
+
 
 void benchmark::save_benchmark_data(const vector<pair<int, double>>& data, const string& filename) {
     ofstream out(filename);
@@ -37,7 +46,7 @@ void benchmark::save_benchmark_data(const vector<pair<int, double>>& data, const
 }
 
 void benchmark::plot_with_gnuplot(const string& data_file, const string& output_png) {
-    string script = "plot_script.gp";
+    string script = "data/plot_script.gp";
     ofstream script_file(script);
     script_file << "set terminal png size 800,600\n";
     script_file << "set output '" << output_png << "'\n";
@@ -57,23 +66,22 @@ void benchmark::plot_with_gnuplot(const string& data_file, const string& output_
     }
 }
 
+
 // ------------------------------------------------------------
 // Основная функция бенчмарка
 // ------------------------------------------------------------
 void benchmark::run_benchmark() {
     cout << "\n======== Запуск Бенчмарка =======" << endl;
-
+    
     vector<pair<int, double>> results;
     for (int number_of_states : vector_number_of_states) {
         double total_time = 0.0;
-        for (int alphabet_size : vector_alphabet_size) {
+        for (int alphabet_size : vector_alphabet_size){
             for (int rep = 0; rep < repetitions; ++rep) {
-                auto dfa = DFABuilder{}
-                               .generatedDFA(number_of_states, alphabet_size, mode, seed + rep)
-                               .build();
-
+                auto dfa = DFABuilder{}.generatedDFA(number_of_states, alphabet_size, mode, seed + rep).build();
+                
                 auto start = high_resolution_clock::now();
-                auto Partition = DFATestHelper::getPartition(dfa);
+                auto Partition =  DFATestHelper::getPartition(dfa);
                 auto end = high_resolution_clock::now();
 
                 duration<double, milli> elapsed = end - start;
@@ -85,25 +93,27 @@ void benchmark::run_benchmark() {
         cout << "States: " << number_of_states << ", avg time: " << avg << " ms\n";
     }
 
-    save_benchmark_data(results, "dfa_benchmark_data.txt");
-    plot_with_gnuplot("dfa_benchmark_data.txt");
+    save_benchmark_data(results, "data/dfa_benchmark_data.txt");
+    plot_with_gnuplot("data/dfa_benchmark_data.txt");
 }
 
-void benchmark::print() {
+void benchmark::print(){
     cout << "\n\n======= Информация о бенчмарке =======" << endl;
 
     cout << "Вектор размера алфавита - ";
-    for (int alphabet_size : vector_alphabet_size) {
+    for (int alphabet_size : vector_alphabet_size){
         cout << alphabet_size << " ";
     }
 
     cout << "\nВектор количества состояний - ";
-    for (int number_of_states : vector_number_of_states) {
+    for (int number_of_states : vector_number_of_states){
         cout << number_of_states << " ";
     }
 
-    cout << "\nРежим - " << mode << endl;
-    cout << "Повторения - " << repetitions << endl;
-    cout << "Сид - " << seed << endl;
+    cout << "\nРежим - "<< mode <<endl;
+    cout << "Повторения - "<< repetitions <<endl;
+    cout << "Сид - " << seed <<endl;
+
+
 }
-}  // namespace func_DFA
+}

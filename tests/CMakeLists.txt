@@ -7,11 +7,11 @@ enable_testing()
 # при желании можно разделить их на несколько исполняемых файлов,
 # что иногда полезно на больших проектах, особенно с долгим рантаймом
 add_executable(my_DFA_test
-    transit.test.cpp
-    DFAmin.test.cpp
-    CreateNewTransitions.test.cpp
-    DFAinput.test.cpp
-    writeDFA.test.cpp
+    tools/transit.test.cpp
+    algorithms/DFAmin.test.cpp
+    algorithms/CreateNewTransitions.test.cpp
+    io/DFAinput.test.cpp
+    io/writeDFA.test.cpp
 )
 
 # линкуемся нашей библиотекой, а также с дефолтным мейном, чтобы не засорять им кодовую базу

@@ -218,7 +218,7 @@ class benchmark {
     void save_benchmark_data(const std::vector<std::pair<int, double>>& data,
                              const std::string& filename);
     void plot_with_gnuplot(const std::string& data_file,
-                           const std::string& output_png = "dfa_min_time.png");
+                           const std::string& output_png = "data/dfa_min_time.png");
 
    public:
     void run_benchmark();

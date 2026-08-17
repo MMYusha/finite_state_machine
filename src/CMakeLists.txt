@@ -4,13 +4,13 @@
 # в последнюю очередь указываем все исходники библиотеки
 # в итоге в build будет библиотека libfunc_transition.a
 add_library(func_DFA STATIC
-    transit.cpp    
-    DFAmin.cpp
-    benchmark.cpp
-    benchmarkBuilder.cpp
-    DFA.cpp
-    DFABuilder.cpp
-    DFATestHelper.cpp
+    tools/transit.cpp
+    algorithms/DFAmin.cpp
+    benchmark/benchmark.cpp
+    benchmark/benchmarkBuilder.cpp
+    core/DFA.cpp
+    core/DFABuilder.cpp
+    utils/DFATestHelper.cpp
 )
 
 # делаем доступными публичные заголовочные файлы
