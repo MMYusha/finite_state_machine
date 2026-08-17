@@ -22,6 +22,7 @@
 Установка на Windows (через MSYS2):
 ```bash
 pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-gtest
+```
 
 ## Структура проекта
 
