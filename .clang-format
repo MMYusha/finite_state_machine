@@ -1,0 +1,6 @@
+BasedOnStyle: Google   # или LLVM, Microsoft, Mozilla
+IndentWidth: 4
+UseTab: Never
+ColumnLimit: 100
+BreakBeforeBraces: Attach
+SortIncludes: true

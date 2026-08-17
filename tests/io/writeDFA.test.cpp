@@ -1,15 +1,17 @@
 #include <gtest/gtest.h>
-#include <func_DFA/DFA.hpp>
+
 #include <fstream>
+#include <func_DFA/DFA.hpp>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
+
 
 using namespace std;
 using namespace func_DFA;
 
 TEST(DFATests, WriteDFATest1) {
-        // ================ ARRANGE ===============
+    // ================ ARRANGE ===============
     // ARRANGE: создаём эталонный объект DFA с известными данными
     vector<string> TrueStringTransition = {"0", "1", "0", "1"};
     vector<string> TruePermittedState = {"C"};
@@ -36,16 +38,14 @@ TEST(DFATests, WriteDFATest1) {
 
     string filename = "test_write.csv";
 
-
     // ============== ACT ===================
     // ACT: создаем и записываем объект в файл
     // Создание ДКА
-    auto TrueDFA = DFABuilder{}.withComponents(  TrueStartState,
-                                            TrueStates,
-                                            TruePermittedState,
-                                            TrueAlphabet,
-                                            TrueTransitions     ).build();
-    // Запись ДКА в файлЫ                                        
+    auto TrueDFA = DFABuilder{}
+                       .withComponents(TrueStartState, TrueStates, TruePermittedState, TrueAlphabet,
+                                       TrueTransitions)
+                       .build();
+    // Запись ДКА в файлЫ
     TrueDFA.exportCSV(filename);
 
     // Чтение файла обратно
@@ -53,7 +53,6 @@ TEST(DFATests, WriteDFATest1) {
 
     // Очистка: удаляем временный файл
     remove(filename.c_str());
-
 
     // ============== ASSERT ===================
     // ASSERT: сравниваем все поля

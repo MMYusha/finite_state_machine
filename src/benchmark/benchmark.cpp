@@ -1,24 +1,26 @@
 #include <func_DFA/DFA.hpp>  
 
-#include <chrono>
 #include <iostream>
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <random>
-#include <algorithm>
-#include <fstream>
-#include <cstdlib>   // для system()
+#include <chrono> // Для измерения времени выполнения
+#include <fstream> // для ofstream
 
-using namespace std;
-using namespace std::chrono;
 
-// ------------------------------------------------------------
-// Генератор ДКА 
-// ------------------------------------------------------------
 
 
 namespace func_DFA{
+using std::cout;
+using std::endl;
+using std::vector;
+using std::string;
+using std::pair;
+using std::ofstream;
+
+// Для измерения времени выполнения
+using std::chrono::high_resolution_clock;
+using std::chrono::duration;
+using std::milli;
+
+
 
 benchmark::benchmark(
     const vector<int> vector_alph_size,
@@ -29,9 +31,12 @@ benchmark::benchmark(
 ) : vector_alphabet_size(vector_alph_size), vector_number_of_states(vector_number_of_st), 
     mode(mod), repetitions(repetit), seed(sed) {}
 
+
 // ------------------------------------------------------------
 // Сохранение данных и построение графика
 // ------------------------------------------------------------
+
+
 void benchmark::save_benchmark_data(const vector<pair<int, double>>& data, const string& filename) {
     ofstream out(filename);
     out << "# states time_ms\n";
@@ -41,7 +46,7 @@ void benchmark::save_benchmark_data(const vector<pair<int, double>>& data, const
 }
 
 void benchmark::plot_with_gnuplot(const string& data_file, const string& output_png) {
-    string script = "plot_script.gp";
+    string script = "data/plot_script.gp";
     ofstream script_file(script);
     script_file << "set terminal png size 800,600\n";
     script_file << "set output '" << output_png << "'\n";
@@ -55,11 +60,12 @@ void benchmark::plot_with_gnuplot(const string& data_file, const string& output_
     string cmd = "gnuplot -persist " + script;
     int ret = system(cmd.c_str());
     if (ret != 0) {
-        cerr << "Gnuplot execution failed. Make sure gnuplot is installed and in PATH.\n";
+        std::cerr << "Gnuplot execution failed. Make sure gnuplot is installed and in PATH.\n";
     } else {
         cout << "Graph saved as " << output_png << "\n";
     }
 }
+
 
 // ------------------------------------------------------------
 // Основная функция бенчмарка
@@ -87,8 +93,8 @@ void benchmark::run_benchmark() {
         cout << "States: " << number_of_states << ", avg time: " << avg << " ms\n";
     }
 
-    save_benchmark_data(results, "dfa_benchmark_data.txt");
-    plot_with_gnuplot("dfa_benchmark_data.txt");
+    save_benchmark_data(results, "data/dfa_benchmark_data.txt");
+    plot_with_gnuplot("data/dfa_benchmark_data.txt");
 }
 
 void benchmark::print(){

@@ -3,8 +3,11 @@ cmake_minimum_required(VERSION 4.3.4)
 
 # имя проекта; не путать с именами target'ов, которые мы собираем
 project(finite_state_machine)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# генерация compile_commands.json для clang
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # во время разработки ставим Debug; когда выпускаем версию, ставим Release
 set(CMAKE_BUILD_TYPE Debug)

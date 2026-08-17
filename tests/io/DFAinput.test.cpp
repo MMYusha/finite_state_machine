@@ -1,9 +1,11 @@
 #include <gtest/gtest.h>
-#include <func_DFA/DFA.hpp>
+
 #include <fstream>
+#include <func_DFA/DFA.hpp>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
+
 
 using namespace std;
 using namespace func_DFA;
@@ -14,7 +16,7 @@ TEST(DFATests, DFAinputTest1) {
     string filename = "test_dfa_input.csv";
     ofstream file(filename);
     ASSERT_TRUE(file.is_open()) << "Не удалось создать временный файл";
-    
+
     // Записываем содержимое в формате, ожидаемом DFAinput
     file << "переход;0;1;0;1\n";
     file << "допустимые состояния;C;;;\n";
@@ -30,11 +32,10 @@ TEST(DFATests, DFAinputTest1) {
     file << "H;G;C;;\n";
     file.close();
 
-
     // ============== ACT ===================
     // ACT: вызываем функцию чтения
     auto dfa = DFABuilder{}.withCSV(filename).build();
-    remove(filename.c_str()); // Очистка: удаляем временный файл
+    remove(filename.c_str());  // Очистка: удаляем временный файл
 
     // ============== ASSERT ===================
     // ASSERT: проверяем каждое поле структуры DFA
@@ -45,7 +46,7 @@ TEST(DFATests, DFAinputTest1) {
 
     // 2) permited_state – допустимые состояния (второй токен второй строки)
     vector<string> TruePermitedStates = {"C"};
-     ASSERT_EQ(TruePermitedStates, dfa.getPermittedStates());
+    ASSERT_EQ(TruePermitedStates, dfa.getPermittedStates());
 
     // 3) start_state – начальное состояние (второй токен третьей строки)
     ASSERT_EQ("A", dfa.getStartState());
@@ -85,9 +86,7 @@ TEST(DFATests, DFAinputTest1) {
         ASSERT_NE(it, transitions.end()) << "Отсутствует состояние " << state;
         ASSERT_EQ(trans, it->second) << "Неверные переходы для состояния " << state;
     }
-
 }
-
 
 TEST(DFATests, DFAinputTest2_ParityOfOnes) {
     // ================ ARRANGE ===============
@@ -95,21 +94,20 @@ TEST(DFATests, DFAinputTest2_ParityOfOnes) {
     string filename = "test_dfa_parity.csv";
     ofstream file(filename);
     ASSERT_TRUE(file.is_open()) << "Не удалось создать временный файл";
-    
-    // Записываем содержимое в формате, ожидаемом DFAinput
-    file << "переход;0;1;;\n";                     // пример входной строки (пустая)
-    file << "допустимые состояния;Even;;;\n";      // допускающее состояние
-    file << "Начальное состояние;Even;;;\n";
-    file << "состояния/алфавит;0;1;;\n";           // алфавит
-    file << "Even;Even;Odd;;\n";                  // переходы из Even
-    file << "Odd;Odd;Even;;\n";                   // переходы из Odd
-    file.close();
 
+    // Записываем содержимое в формате, ожидаемом DFAinput
+    file << "переход;0;1;;\n";                 // пример входной строки (пустая)
+    file << "допустимые состояния;Even;;;\n";  // допускающее состояние
+    file << "Начальное состояние;Even;;;\n";
+    file << "состояния/алфавит;0;1;;\n";  // алфавит
+    file << "Even;Even;Odd;;\n";          // переходы из Even
+    file << "Odd;Odd;Even;;\n";           // переходы из Odd
+    file.close();
 
     // ============== ACT ===================
     // ACT: вызываем функцию чтения
     auto dfa = DFABuilder{}.withCSV(filename).build();
-    remove(filename.c_str()); // Очистка: удаляем временный файл
+    remove(filename.c_str());  // Очистка: удаляем временный файл
 
     // ============== ASSERT ===================
     // ASSERT: проверяем каждое поле структуры DFA
@@ -120,7 +118,7 @@ TEST(DFATests, DFAinputTest2_ParityOfOnes) {
 
     // 2) permited_state – допустимые состояния (второй токен второй строки)
     vector<string> TruePermitedStates = {"Even"};
-     ASSERT_EQ(TruePermitedStates, dfa.getPermittedStates());
+    ASSERT_EQ(TruePermitedStates, dfa.getPermittedStates());
 
     // 3) start_state – начальное состояние (второй токен третьей строки)
     ASSERT_EQ("Even", dfa.getStartState());
@@ -148,10 +146,7 @@ TEST(DFATests, DFAinputTest2_ParityOfOnes) {
         ASSERT_NE(it, transitions.end()) << "Отсутствует состояние " << state;
         ASSERT_EQ(trans, it->second) << "Неверные переходы для состояния " << state;
     }
-
 }
-
-
 
 TEST(DFATests, DFAinputTest3_EndsWith01) {
     // ================ ARRANGE ===============
@@ -159,22 +154,21 @@ TEST(DFATests, DFAinputTest3_EndsWith01) {
     string filename = "test_dfa_ends01.csv";
     ofstream file(filename);
     ASSERT_TRUE(file.is_open()) << "Не удалось создать временный файл";
-    
+
     // Записываем содержимое в формате, ожидаемом DFAinput
-    file << "переход;0;1;0;1\n";                     // пример строки "01"
+    file << "переход;0;1;0;1\n";  // пример строки "01"
     file << "допустимые состояния;S01;;;\n";
     file << "Начальное состояние;S;;;\n";
     file << "состояния/алфавит;0;1;;\n";
-    file << "S;S0;S;;\n";                            // S по 0 -> S0, по 1 -> S
-    file << "S0;S0;S01;;\n";                         // S0 по 0 -> S0, по 1 -> S01
-    file << "S01;S0;S;;\n";                          // S01 по 0 -> S0, по 1 -> S
+    file << "S;S0;S;;\n";     // S по 0 -> S0, по 1 -> S
+    file << "S0;S0;S01;;\n";  // S0 по 0 -> S0, по 1 -> S01
+    file << "S01;S0;S;;\n";   // S01 по 0 -> S0, по 1 -> S
     file.close();
-
 
     // ============== ACT ===================
     // ACT: вызываем функцию чтения
     auto dfa = DFABuilder{}.withCSV(filename).build();
-    remove(filename.c_str()); // Очистка: удаляем временный файл
+    remove(filename.c_str());  // Очистка: удаляем временный файл
 
     // ============== ASSERT ===================
     // ASSERT: проверяем каждое поле структуры DFA
@@ -185,7 +179,7 @@ TEST(DFATests, DFAinputTest3_EndsWith01) {
 
     // 2) permited_state – допустимые состояния (второй токен второй строки)
     vector<string> TruePermitedStates = {"S01"};
-     ASSERT_EQ(TruePermitedStates, dfa.getPermittedStates());
+    ASSERT_EQ(TruePermitedStates, dfa.getPermittedStates());
 
     // 3) start_state – начальное состояние (второй токен третьей строки)
     ASSERT_EQ("S", dfa.getStartState());
@@ -215,9 +209,7 @@ TEST(DFATests, DFAinputTest3_EndsWith01) {
         ASSERT_NE(it, transitions.end()) << "Отсутствует состояние " << state;
         ASSERT_EQ(trans, it->second) << "Неверные переходы для состояния " << state;
     }
-
 }
-
 
 TEST(DFATests, DFAinputTest4_SingleState) {
     // ================ ARRANGE ===============
@@ -225,20 +217,19 @@ TEST(DFATests, DFAinputTest4_SingleState) {
     string filename = "test_dfa_single.csv";
     ofstream file(filename);
     ASSERT_TRUE(file.is_open()) << "Не удалось создать временный файл";
-    
+
     // Записываем содержимое в формате, ожидаемом DFAinput
-    file << "переход;0;1;;;;\n";                      // пример строки "01"
+    file << "переход;0;1;;;;\n";  // пример строки "01"
     file << "допустимые состояния;A;;;\n";
     file << "Начальное состояние;A;;;;;;\n";
     file << "состояния/алфавит;0;1;;;;;\n";
-    file << "A;A;A;;;;\n";                            // петли по 0 и 1
+    file << "A;A;A;;;;\n";  // петли по 0 и 1
     file.close();
-
 
     // ============== ACT ===================
     // ACT: вызываем функцию чтения
     auto dfa = DFABuilder{}.withCSV(filename).build();
-    remove(filename.c_str()); // Очистка: удаляем временный файл
+    remove(filename.c_str());  // Очистка: удаляем временный файл
 
     // ============== ASSERT ===================
     // ASSERT: проверяем каждое поле структуры DFA
@@ -249,7 +240,7 @@ TEST(DFATests, DFAinputTest4_SingleState) {
 
     // 2) permited_state – допустимые состояния (второй токен второй строки)
     vector<string> TruePermitedStates = {"A"};
-     ASSERT_EQ(TruePermitedStates, dfa.getPermittedStates());
+    ASSERT_EQ(TruePermitedStates, dfa.getPermittedStates());
 
     // 3) start_state – начальное состояние (второй токен третьей строки)
     ASSERT_EQ("A", dfa.getStartState());
@@ -275,9 +266,7 @@ TEST(DFATests, DFAinputTest4_SingleState) {
         ASSERT_NE(it, transitions.end()) << "Отсутствует состояние " << state;
         ASSERT_EQ(trans, it->second) << "Неверные переходы для состояния " << state;
     }
-
 }
-
 
 TEST(DFAinputTest_NotAllAlphabetUse, NotAllAlphabetUse) {
     // ================ ARRANGE ===============
@@ -285,7 +274,7 @@ TEST(DFAinputTest_NotAllAlphabetUse, NotAllAlphabetUse) {
     string filename = "test_dfa_NotAllAlphabetUse.csv";
     ofstream file(filename);
     ASSERT_TRUE(file.is_open()) << "Не удалось создать временный файл";
-    
+
     // Записываем содержимое в формате, ожидаемом DFAinput
     file << "переход;0;1;0;1\n";
     file << "допустимые состояния;C;;;\n";
@@ -301,13 +290,11 @@ TEST(DFAinputTest_NotAllAlphabetUse, NotAllAlphabetUse) {
     file << "H;G;C;;\n";
     file.close();
 
-
     // ============== ACT ===================
     // ACT: вызываем функцию чтения
     auto dfa = DFABuilder{}.withCSV(filename).build();
-    remove(filename.c_str()); // Очистка: удаляем временный файл
+    remove(filename.c_str());  // Очистка: удаляем временный файл
 
-    
     // ============== ASSERT ===================
     // ASSERT: проверяем каждое поле структуры DFA
 
@@ -317,7 +304,7 @@ TEST(DFAinputTest_NotAllAlphabetUse, NotAllAlphabetUse) {
 
     // 2) permited_state – допустимые состояния (второй токен второй строки)
     vector<string> TruePermitedStates = {"C"};
-     ASSERT_EQ(TruePermitedStates, dfa.getPermittedStates());
+    ASSERT_EQ(TruePermitedStates, dfa.getPermittedStates());
 
     // 3) start_state – начальное состояние (второй токен третьей строки)
     ASSERT_EQ("A", dfa.getStartState());
@@ -338,13 +325,13 @@ TEST(DFAinputTest_NotAllAlphabetUse, NotAllAlphabetUse) {
     TrueTransitions["B"]["1"] = "C";
     TrueTransitions["C"]["0"] = "A";
     TrueTransitions["C"]["1"] = "C";
-    //TrueTransitions["D"]["0"] = "C";
+    // TrueTransitions["D"]["0"] = "C";
     TrueTransitions["D"]["1"] = "G";
     TrueTransitions["E"]["0"] = "H";
     TrueTransitions["E"]["1"] = "F";
-    //TrueTransitions["F"]["0"] = "C";
+    // TrueTransitions["F"]["0"] = "C";
     TrueTransitions["F"]["1"] = "G";
-    //TrueTransitions["G"]["0"] = "G";
+    // TrueTransitions["G"]["0"] = "G";
     TrueTransitions["G"]["1"] = "E";
     TrueTransitions["H"]["0"] = "G";
     TrueTransitions["H"]["1"] = "C";
@@ -357,5 +344,4 @@ TEST(DFAinputTest_NotAllAlphabetUse, NotAllAlphabetUse) {
         ASSERT_NE(it, transitions.end()) << "Отсутствует состояние " << state;
         ASSERT_EQ(trans, it->second) << "Неверные переходы для состояния " << state;
     }
-
 }
