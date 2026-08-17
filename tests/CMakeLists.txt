@@ -21,6 +21,9 @@ target_link_libraries(my_DFA_test PRIVATE
     GTest::gtest_main
     func_DFA
 )
+target_include_directories(my_DFA_test PRIVATE
+    "C:/msys64/ucrt64/include"
+)
 
 # в данном случае не нужно, но в ваших серьезных проектах в тесты надо будет подключать публичные и приватные хэдеры
 target_include_directories(my_DFA_test PRIVATE
